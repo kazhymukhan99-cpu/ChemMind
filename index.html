@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1225" />
+  <title>ChemMind — VSEPR & Crystal Lab</title>
+  <style>
+    :root{--bg:#0b1225;--panel:#131f37;--panel2:#1a2b47;--line:#2a3c5c;--ink:#f2f7ff;--muted:#a8b9d2;--accent:#60d9d0;--accent2:#82a9ff;--warning:#ffca80;--good:#9af0ba;--bad:#ffabac;--radius:18px}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:radial-gradient(ellipse at 90% 0%,#1a3156 0,transparent 45%),var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;min-height:100vh}
+    button,input,select{font:inherit}button{cursor:pointer}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    .wrap{width:min(1110px,calc(100% - 36px));margin:auto}
+    header{border-bottom:1px solid var(--line);background:#0b1225d9;position:sticky;top:0;z-index:20;backdrop-filter:blur(16px)}
+    .topbar{min-height:75px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 0}
+    .brand{font-size:1.42rem;font-weight:850;letter-spacing:-.035em;display:flex;align-items:center;gap:10px;margin-right:auto}
+    .brand-mark{width:39px;height:39px;background:#154954;border:1px solid #368883;border-radius:13px;display:grid;place-items:center;color:var(--accent);font-size:1.35rem}
+    .brand span:last-child span{color:var(--accent)}
+    .nav{display:flex;gap:6px;flex-wrap:wrap}
+    .lang-toggle{display:flex;gap:3px;background:#162740;border:1px solid #3d5971;border-radius:12px;padding:4px;align-items:center;flex-shrink:0}
+    .lang-toggle button{background:transparent;border:0;border-radius:8px;padding:7px 10px;color:#aec4da;font-size:.82rem;font-weight:800;min-width:46px}
+    .lang-toggle button[aria-pressed="true"]{background:#60d9d0;color:#07272a}
+    @media(max-width:800px){.lang-toggle{margin-left:auto}}
+
+    .nav button{border:1px solid transparent;color:var(--muted);background:none;padding:9px 13px;border-radius:11px;font-weight:650}
+    .nav button.active{background:var(--panel2);color:var(--ink);border-color:var(--line)}
+    main{padding:32px 0 70px}.eyebrow{color:var(--accent);font-size:.81rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+    h1,h2,h3,p{margin-top:0}h1{font-size:clamp(1.9rem,5vw,3.1rem);line-height:1.13;letter-spacing:-.04em;margin-bottom:15px}h2{font-size:1.55rem;line-height:1.18;letter-spacing:-.02em;margin-bottom:12px}h3{font-size:1.08rem;margin-bottom:8px}
+    p{color:var(--muted)}.lead{font-size:1.1rem;max-width:750px}
+    .hero{display:grid;grid-template-columns:1.35fr .65fr;gap:22px;align-items:stretch;margin-bottom:23px}
+    .card{border:1px solid var(--line);background:linear-gradient(145deg,var(--panel),#10192e);border-radius:var(--radius);padding:24px}
+    .card.soft{background:#101c31}.highlight{background:linear-gradient(140deg,#164e58,#162b46);border-color:#36878e}
+    .hero .card{display:flex;flex-direction:column;justify-content:center;min-height:265px}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    .btn{border:1px solid #477d83;background:#62d9d0;color:#082323;padding:11px 18px;border-radius:12px;font-weight:800;transition:transform .1s,background .1s}
+    .btn:hover{transform:translateY(-1px);background:#84f1e7}.btn.secondary{background:#1b304b;border-color:#49637d;color:var(--ink)}.btn.secondary:hover{background:#2b4261}
+    .btn.ghost{background:transparent;border-color:var(--line);color:var(--muted)}.btn.danger{background:#3b2536;border-color:#995364;color:#ffd9db}
+    .btn:disabled{opacity:.48;cursor:not-allowed;transform:none}
+    .capsule{border:1px solid #4a7680;color:#9feee7;background:#103b44;padding:5px 10px;border-radius:99px;display:inline-block;font-size:.78rem;font-weight:750;width:max-content;margin-bottom:12px}
+    .hero-mol{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7px}
+    .hero-mol svg{width:100%;max-width:255px;height:180px}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.feature{padding:20px}.feature .num{font-size:.78rem;color:var(--accent);font-weight:900}.feature p{font-size:.91rem;margin-bottom:0}
+    .notice{padding:14px 16px;border-radius:12px;border:1px solid #71613b;background:#352e22;color:#f9ddb2;font-size:.91rem;margin:14px 0}
+    .muted{color:var(--muted)}.small{font-size:.87rem}.tiny{font-size:.75rem}.strong{font-weight:800;color:var(--ink)}
+    .section-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+    .concept{padding:18px;border-radius:14px;background:#1d2b47;border:1px solid var(--line)}.concept p{margin:0;font-size:.9rem}
+    .formula{display:inline-block;padding:4px 10px;border:1px solid #3a6479;background:#142f49;border-radius:8px;color:#b5f9ee;font-weight:800;letter-spacing:.06em}
+    .tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:580px}th,td{border-bottom:1px solid var(--line);padding:12px 11px;text-align:left;vertical-align:top}th{color:#9eb4d0;font-size:.82rem}td{font-size:.93rem}
+    .progressline{height:9px;background:#1f314a;border-radius:20px;overflow:hidden}.progressline div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:20px;transition:width .25s}
+    .quiz-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:20px}.question-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+    .molecule-panel{display:grid;place-items:center;min-height:285px;text-align:center;background:radial-gradient(circle,#223c5a,#121e34 70%);border-radius:14px;border:1px solid var(--line);padding:15px}
+    .molecule-panel svg{width:min(100%,320px);height:204px}.molecule-caption{font-size:.8rem;color:var(--muted)}
+    label.field{font-size:.9rem;font-weight:700;display:block;margin:16px 0 6px;color:#dbe6f8}
+    select,input{width:100%;background:#0e1b30;border:1px solid #4b5d78;border-radius:12px;padding:12px 13px;color:var(--ink)}select option{background:#0e1b30}
+    .feedback{padding:14px 16px;border-radius:12px;margin-top:16px;border:1px solid #54866c;background:#173829;color:#dcfce9}.feedback.error{background:#382933;border-color:#86596b;color:#ffe5e5}
+    .feedback strong{color:inherit}.feedback p{color:inherit;margin:8px 0 0}
+    .tag{display:inline-flex;align-items:center;border:1px solid #426780;background:#18314e;border-radius:8px;padding:4px 9px;font-size:.8rem;color:#bce2ff}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:16px 0}.stat{padding:18px;border:1px solid var(--line);background:#182740;border-radius:14px}.stat .n{font-size:1.7rem;font-weight:850;color:var(--accent);display:block}.stat .label{font-size:.8rem;color:var(--muted)}
+    .student{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:18px 0}.student .code{width:230px}.student label{display:block;margin:0 0 7px;font-size:.85rem;font-weight:700}
+    .summary-list{padding-left:20px;color:var(--muted)}.summary-list li{margin-bottom:9px}
+    .hidden{display:none!important}footer{border-top:1px solid var(--line);padding:23px 0 35px;color:var(--muted);font-size:.78rem}
+    .empty{padding:42px;text-align:center;color:var(--muted)}
+    .builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .build-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .build-buttons button{font-size:.9rem}
+    .build-formula{font-size:2.1rem;color:var(--accent);font-weight:850}
+    .builder-visual{height:340px;border-radius:15px;border:1px solid var(--line);background:radial-gradient(circle,#243b58,#0f1b30 76%);display:grid;place-items:center}
+    .builder-visual svg{width:100%;max-height:320px}
+    @media(max-width:800px){.builder-grid{grid-template-columns:1fr}}
+    @media(max-width:520px){.build-buttons{grid-template-columns:1fr}}
+    @media(max-width:800px){.hero,.quiz-grid{grid-template-columns:1fr}.hero .card{min-height:200px}.grid{grid-template-columns:1fr 1fr}.hero-mol svg{height:150px}.topbar{gap:6px}.brand{width:100%}.nav{width:100%}.nav button{flex:1}}
+    @media(max-width:520px){.wrap{width:min(100% - 24px,1100px)}main{padding-top:23px}.grid,.grid.two,.stats{grid-template-columns:1fr}.card{padding:18px}.actions .btn{width:100%}.nav button{padding:9px 8px;font-size:.86rem}.student .code{width:100%}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+    /* Crystal Lab: local 3D renderer, bilingual interactive chemistry module */
+    .cr-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 20px}
+    .cr-tabs .btn{min-width:160px}
+    .cr-stage{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .cr-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
+    .cr-choose{justify-content:flex-start;gap:7px;margin:13px 0 17px}
+    .cr-choose button{border:1px solid #3d5571;background:#1b304b;color:#dce8fa;border-radius:10px;padding:8px 13px;cursor:pointer;font-weight:700}
+    .cr-choose button[aria-pressed="true"]{border-color:var(--accent);color:#09282c;background:var(--accent)}
+    .cr-view{height:365px;position:relative;border:1px solid #324760;border-radius:15px;background:radial-gradient(ellipse at 45% 25%,#243f62,#0b162a 78%);overflow:hidden}
+    #crCanvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+    #crCanvas:active{cursor:grabbing}
+    .cr-axis-tag{position:absolute;bottom:12px;left:13px;pointer-events:none;color:#b2c9e8;background:#091326bd;border:1px solid #324a64;border-radius:9px;padding:5px 9px;font-size:.78rem}
+    .cr-legend{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px;font-size:.82rem;color:var(--muted)}
+    .cr-swatch{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle}
+    .cr-predict-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:17px 0}
+    .cr-answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+    .cr-answers label{display:flex;gap:12px;align-items:center;border:1px solid #3e5575;border-radius:13px;padding:15px;cursor:pointer;color:#e6efff;background:#182941;font-weight:650}
+    .cr-answers label:has(input:checked){background:#1a4e55;border-color:var(--accent)}
+    .cr-answers input{width:auto;accent-color:var(--accent);flex:0 0 auto}
+    @media(max-width:900px){.cr-stage{grid-template-columns:1fr}.cr-predict-grid{grid-template-columns:1fr}}
+    @media(max-width:600px){.cr-answers{grid-template-columns:1fr}.cr-tabs .btn{flex:1;min-width:unset}.cr-view{height:320px}}
+
+    #quiz .cr-tabs {margin-bottom:18px}
+    #quizLessonNote {margin:0 0 18px}
+    #quiz #crTest>.card {margin-top:0}
+    #vsQuizWrap>.section-head {margin-top:22px}
+    /* Contest author profile: offline, bilingual, editable on this computer */
+    .author-home{margin-top:21px;padding-top:15px;border-top:1px solid #4b7f81;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .author-home .label{color:#c2d8ea;font-size:.77rem;font-weight:750;text-transform:uppercase;letter-spacing:.07em}
+    .author-home .identity{color:#fff;font-weight:800}
+    .author-home button{border:1px solid #82d2cc;background:#103b44;color:#a8fff0;border-radius:9px;padding:7px 11px;font-size:.85rem;font-weight:750}
+    .about-cover{background:linear-gradient(123deg,#153b54,#133044 50%,#17233c);border:1px solid #407c8c;position:relative;overflow:hidden}
+    .about-cover::after{content:'⚛';font-size:13rem;line-height:1;position:absolute;right:-20px;top:-45px;color:#76dbd1;opacity:.06;pointer-events:none}
+    .author-icon{width:54px;height:54px;border-radius:15px;background:#236779;border:1px solid #67abae;display:grid;place-items:center;font-size:1.7rem;font-weight:850;color:#effffb}
+    .author-name{font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.2;color:#fff;font-weight:850;letter-spacing:-.035em;overflow-wrap:anywhere}
+    .about-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+    .about-meta > div{border:1px solid #385a6c;border-radius:12px;background:#102539a6;padding:12px}
+    .about-meta small{display:block;color:#9dbcd4;font-size:.78rem;margin-bottom:4px}
+    .about-meta strong{display:block;overflow-wrap:anywhere;font-weight:750}
+    .about-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}
+    .author-edit{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 15px}
+    .author-edit .full{grid-column:1/-1}
+    .about-rule{padding:14px 16px;border-radius:12px;border:1px solid #34506e;background:#172840;margin:11px 0}
+    .about-rule p{font-size:.91rem;margin:5px 0 0}
+    .note-legal{font-size:.83rem;line-height:1.55;color:#bbd0e3}
+    #authorSaveNotice{margin-top:12px;color:#a8f4cf;font-size:.88rem;min-height:20px}
+    .module-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:18px}
+    .module-shortcuts .module-card{border:1px solid #385775;border-radius:15px;padding:18px;background:#142941;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+    .module-card span{color:#6be6dd;font-weight:850;font-size:.76rem;letter-spacing:.07em}
+    .module-card h3{margin:0}.module-card p{margin:0;flex:1;font-size:.88rem}
+    .module-card .btn{margin-top:8px;padding:9px 13px}
+    footer .author-footer{display:block;margin:0 0 7px;font-weight:700;color:#dceafa}
+    @media(max-width:780px){.about-layout,.module-shortcuts{grid-template-columns:1fr}}
+    @media(max-width:520px){.about-meta,.author-edit{grid-template-columns:1fr}.author-edit .full{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <header><div class="wrap topbar">
+    <div class="brand"><div class="brand-mark" aria-hidden="true">⚛</div><span>Chem<span>Mind</span></span></div>
+    <nav class="nav" aria-label="Навигация">
+      <button class="active" data-tab="home">Главная</button>
+      <button data-tab="learn">Теория</button>
+      <button data-tab="build">Конструктор</button>
+      <button data-tab="crystal" id="crNav">Кристаллические решётки</button>
+      <button data-tab="quiz">Тренировка и тесты</button>
+      <button data-tab="results">Результаты</button>
+      <button data-tab="author" type="button" class="cm-i18n" data-ru="Об авторе" data-kk="Автор туралы">Об авторе</button>
+    </nav>
+    <div class="lang-toggle" role="group" aria-label="Тіл / Язык">
+      <button id="langKk" type="button" lang="kk" aria-pressed="false">ҚАЗ</button>
+      <button id="langRu" type="button" lang="ru" aria-pressed="true">РУС</button>
+    </div>
+  </div></header>
+  <main class="wrap">
+    <section id="home" class="page">
+      <div class="hero">
+        <div class="card highlight">
+          <span class="capsule">Учебная версия • 10 класс</span>
+          <div class="eyebrow">Учись понимать, а не угадывать</div>
+          <h1>Химия становится понятной!</h1>
+          <p class="lead cm-i18n" data-ru="Исследуй геометрию молекул и кристаллические решётки, вращай 3D-модели, прогнозируй свойства и разбирай ошибки." data-kk="Молекулалардың геометриясы мен кристалдық торларды зертте, 3D-модельдерді айналдыр, қасиеттерді болжа және қателерді талда.">Исследуй геометрию молекул и кристаллические решётки, вращай 3D-модели, прогнозируй свойства и разбирай ошибки.</p>
+          <div class="actions"><button class="btn cm-i18n" type="button" id="homeStartCrystal" data-ru="Начать тест по кристаллическим решёткам →" data-kk="Кристалдық торлар бойынша тестті бастау →">Начать тест по кристаллическим решёткам →</button><button class="btn secondary" data-go="learn">Открыть теорию</button></div>
+          <div class="author-home">
+            <div><span class="label cm-i18n" data-ru="Автор платформы" data-kk="Платформа авторы">Автор платформы</span><br><span class="identity" id="homeAuthorName">Қажымұхан Жанкожа Бақтыбайұлы</span></div>
+            <button type="button" data-go="author" class="cm-i18n" data-ru="О проекте →" data-kk="Жоба туралы →">О проекте →</button>
+          </div>
+        </div>
+        <div class="card hero-mol">
+          <span class="tag">NH₃ • AX₃E</span>
+          <svg viewBox="0 0 270 190" role="img" aria-label="Схематическое изображение молекулы аммиака NH3">
+            <defs><linearGradient id="n" x2=".8" y2="1"><stop stop-color="#8fb8ff"/><stop offset="1" stop-color="#3772ce"/></linearGradient></defs>
+            <g stroke="#92a5c8" stroke-linecap="round" stroke-width="12"><line x1="133" y1="79" x2="67" y2="130"/><line x1="133" y1="79" x2="199" y2="130"/><line x1="133" y1="79" x2="135" y2="158"/></g>
+            <circle cx="133" cy="79" r="30" fill="url(#n)"/><g fill="#f6fbff"><circle cx="67" cy="130" r="19"/><circle cx="199" cy="130" r="19"/><circle cx="135" cy="158" r="19"/></g>
+            <text x="133" y="88" font-size="27" text-anchor="middle" fill="#fff" font-weight="800">N</text>
+            <g font-size="16" font-weight="700" fill="#243451" text-anchor="middle"><text x="67" y="136">H</text><text x="199" y="136">H</text><text x="135" y="164">H</text></g>
+            <g fill="#62d9d0"><circle cx="122" cy="25" r="6"/><circle cx="144" cy="25" r="6"/></g>
+          </svg>
+          <div class="molecule-caption">3 связи + 1 неподелённая пара → пирамида</div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card feature"><div class="num">01 — ДИАГНОСТИКА</div><h3>Определи исходный уровень</h3><p>6 заданий до изучения темы, без подсказок.</p></div>
+        <div class="card feature"><div class="num">02 — ОБУЧЕНИЕ</div><h3>Разбери причины ошибок</h3><p>Модели AXE, геометрия электронных областей и форма молекул.</p></div>
+        <div class="card feature"><div class="num">03 — РЕЗУЛЬТАТ</div><h3>Измерь изменение</h3><p>6 сопоставимых заданий после тренировки и сравнение баллов.</p></div>
+      </div>
+      <div class="card" style="margin-top:18px;border-color:#397f83;background:linear-gradient(110deg,#15464b,#16243a)">
+        <span class="capsule" id="crHomeTag"></span>
+        <h2 id="crHomeTitle"></h2><p id="crHomeDesc"></p>
+        <button class="btn" id="crHomeOpen" type="button"></button>
+      </div>
+
+      <div class="module-shortcuts" aria-label="ChemMind modules">
+        <div class="module-card">
+          <span class="cm-i18n" data-ru="МОДУЛЬ 01" data-kk="01-МОДУЛЬ">МОДУЛЬ 01</span>
+          <h3 class="cm-i18n" data-ru="Геометрия молекул · VSEPR" data-kk="Молекулалардың геометриясы · VSEPR">Геометрия молекул · VSEPR</h3>
+          <p class="cm-i18n" data-ru="Теория, калькулятор AXE, конструктор и вращаемые 3D-модели." data-kk="Теория, AXE калькуляторы, құрастырғыш және айналмалы 3D-модельдер.">Теория, калькулятор AXE, конструктор и вращаемые 3D-модели.</p>
+          <button type="button" class="btn secondary cm-i18n" data-go="learn" data-ru="Открыть модуль →" data-kk="Модульді ашу →">Открыть модуль →</button>
+        </div>
+        <div class="module-card">
+          <span class="cm-i18n" data-ru="МОДУЛЬ 02 · 10.1.4.11" data-kk="02-МОДУЛЬ · 10.1.4.11">МОДУЛЬ 02 · 10.1.4.11</span>
+          <h3 class="cm-i18n" data-ru="Кристаллические решётки" data-kk="Кристалдық торлар">Кристаллические решётки</h3>
+          <p class="cm-i18n" data-ru="Ионные, атомные, молекулярные и металлические решётки; прогноз свойств и тесты." data-kk="Иондық, атомдық, молекулалық және металдық торлар; қасиеттерді болжау және тесттер.">Ионные, атомные, молекулярные и металлические решётки; прогноз свойств и тесты.</p>
+          <button type="button" class="btn secondary cm-i18n" data-go="crystal" data-ru="Открыть модуль →" data-kk="Модульді ашу →">Открыть модуль →</button>
+        </div>
+      </div>
+      <div class="notice"><strong>Рекомендуемый порядок:</strong> входной тест → теория → тренировка → итоговый тест. Не вводите ФИО учеников. Используйте только случайный код.</div>
+    </section>
+
+    <section id="learn" class="page hidden">
+      <div class="section-head"><div><span class="eyebrow">Модуль 01</span><h1>Геометрия молекул: VSEPR</h1><p>Электронные области отталкиваются и располагаются как можно дальше друг от друга.</p></div><button class="btn" data-go="quiz" data-quiz-context="vsepr">Перейти к практике →</button></div>
+      <div class="grid two">
+        <div class="concept"><h3>Электронная геометрия</h3><p>Учитывает <strong>все</strong> электронные области центрального атома: связи и неподелённые пары.</p></div>
+        <div class="concept"><h3>Молекулярная геометрия</h3><p>Учитывает положение <strong>атомов</strong>. Неподелённые пары влияют на углы, но не считаются вершинами формы молекулы.</p></div>
+        <div class="concept"><h3>Обозначение AXE</h3><p><span class="formula">A</span> — центральный атом; <span class="formula">X</span> — число связанных с ним атомов; <span class="formula">E</span> — число неподелённых пар на A.</p></div>
+        <div class="concept"><h3>Кратная связь</h3><p>В VSEPR двойная или тройная связь рассматривается как <strong>одна электронная область</strong>, а не две или три.</p></div>
+      </div>
+      <div class="card" style="margin-top:18px"><h2>Запомни пять основных случаев</h2>
+        <div class="tablewrap"><table>
+          <thead><tr><th>AXE</th><th>Электронная геометрия</th><th>Форма молекулы</th><th>Пример</th></tr></thead>
+          <tbody>
+            <tr><td>AX₂</td><td>Линейная</td><td>Линейная</td><td>CO₂</td></tr>
+            <tr><td>AX₃</td><td>Тригонально-плоская</td><td>Тригонально-плоская</td><td>BF₃</td></tr>
+            <tr><td>AX₄</td><td>Тетраэдрическая</td><td>Тетраэдрическая</td><td>CH₄</td></tr>
+            <tr><td>AX₃E</td><td>Тетраэдрическая</td><td>Тригонально-пирамидальная</td><td>NH₃</td></tr>
+            <tr><td>AX₂E₂</td><td>Тетраэдрическая</td><td>Угловая</td><td>H₂O</td></tr>
+          </tbody>
+        </table></div>
+        <div class="notice">Важно: реальные валентные углы зависят от конкретной молекулы. Схематические изображения в заданиях и пространственная модель ниже идеализированы.</div>
+        <button class="btn" data-go="quiz" data-quiz-context="vsepr">Начать тренировку</button>
+      </div>
+      <div class="card" style="margin-top:18px">
+        <h2>Калькулятор Гиллеспи (VSEPR)</h2>
+        <p>Выбери количество связанных атомов и неподелённых пар.</p>
+        <label class="field" for="axeX">Количество связанных атомов X</label>
+        <select id="axeX"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select>
+        <label class="field" for="axeE">Количество неподелённых пар E</label>
+        <select id="axeE"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option></select>
+        <div id="axeResult" class="feedback" aria-live="polite"></div>
+      </div>
+      <div class="card" style="margin-top:18px">
+        <h2>3D-модель VSEPR</h2>
+        <p>Перетаскивай мышкой, чтобы вращать модель. Зелёные точки показывают неподелённые электронные пары.</p>
+        <canvas id="cm3d" style="width:100%;height:320px;display:block;border-radius:14px;cursor:grab;touch-action:none" aria-label="Вращаемая схематическая 3D-модель электронных областей"></canvas>
+        <p id="cm3dLabel" class="small" style="margin-top:12px"></p>
+        <button type="button" class="btn secondary" id="cm3dReset">Сбросить вращение ↺</button>
+        <p class="small" style="margin-top:12px">Учебная модель: направления идеализированы, реальные длины связей и углы могут отличаться.</p>
+      </div>
+    </section>
+
+    <section id="build" class="page hidden">
+      <div class="section-head"><div>
+        <span class="eyebrow">Инженерная практика • VSEPR</span>
+        <h1>Конструктор молекул</h1>
+        <p class="lead">Собери вокруг центрального атома связанные атомы X и неподелённые пары E. Затем проверь, верно ли ты применил теорию Гиллеспи.</p>
+      </div></div>
+      <div class="builder-grid">
+        <div class="card">
+          <h2>1. Выбери молекулу</h2>
+          <label class="field" for="buildTarget">Химическая формула</label>
+          <select id="buildTarget">
+            <option value="nh3">NH₃ — аммиак</option>
+            <option value="h2o">H₂O — вода</option>
+            <option value="bf3">BF₃ — трифторид бора</option>
+            <option value="ch4">CH₄ — метан</option>
+            <option value="so2">SO₂ — диоксид серы</option>
+            <option value="co2">CO₂ — диоксид углерода</option>
+            <option value="pcl3">PCl₃ — трихлорид фосфора</option>
+          </select>
+          <div class="notice" style="margin-top:18px">Сначала самостоятельно составь структуру Льюиса. Помни: одна двойная или тройная связь считается одной электронной областью.</div>
+          <h3>2. Добавляй элементы</h3>
+          <div class="build-buttons">
+            <button class="btn secondary" id="addX" type="button">+ Связанный атом X</button>
+            <button class="btn ghost" id="removeX" type="button">− Убрать X</button>
+            <button class="btn secondary" id="addE" type="button">+ Неподелённая пара E</button>
+            <button class="btn ghost" id="removeE" type="button">− Убрать E</button>
+          </div>
+          <p class="small" style="margin:18px 0 5px">Твоя конструкция:</p>
+          <div id="buildAXE" class="build-formula" aria-live="polite">AX₀</div>
+          <p class="small" id="buildCounts">Связанных атомов: 0 · неподелённых пар: 0</p>
+          <div class="actions">
+            <button class="btn" id="checkBuilder" type="button">Проверить конструкцию</button>
+            <button class="btn secondary" id="clearBuilder" type="button">Начать заново</button>
+          </div>
+          <div id="builderFeedback" aria-live="polite"></div>
+          <button class="btn secondary hidden" id="builderShow3d" type="button" style="margin-top:15px">Посмотреть в 3D →</button>
+        </div>
+        <div class="card">
+          <h2>Собранная модель</h2>
+          <div id="builderVisual" class="builder-visual" aria-label="Схема собранных областей"></div>
+          <p class="small">Это схема областей вокруг центрального атома, а не модель действительных валентных углов. После проверки можно открыть вращаемую 3D-модель.</p>
+          <div class="concept" style="margin-top:16px">
+            <h3>Что здесь изучает ученик?</h3>
+            <p>Сначала считает электронные области, затем формирует обозначение AXE и сравнивает электронную и молекулярную геометрию.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz" class="page hidden">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow cm-i18n" data-ru="10 КЛАСС · ДИАГНОСТИКА" data-kk="10-СЫНЫП · ДИАГНОСТИКА">10 КЛАСС · ДИАГНОСТИКА</span>
+          <h1 class="cm-i18n" data-ru="Тренировка и тесты" data-kk="Жаттығу және тесттер">Тренировка и тесты</h1>
+          <p class="lead cm-i18n" data-ru="Выбери тему. Для конкурсного урока по цели 10.1.4.11 используй Crystal Lab: кристаллические решётки и свойства веществ." data-kk="Тақырыпты таңда. 10.1.4.11 оқу мақсаты бойынша конкурстық сабақта Crystal Lab: кристалдық торлар мен заттардың қасиеттері бөлімін пайдалан.">Выбери тему. Для конкурсного урока по цели 10.1.4.11 используй Crystal Lab: кристаллические решётки и свойства веществ.</p>
+        </div>
+        <span class="tag">10.1.4.11</span>
+      </div>
+      <div class="cr-tabs" role="group" aria-label="Тест тақырыбы / Тема теста">
+        <button type="button" id="quizTopicCrystal" class="btn cm-i18n" aria-pressed="true" data-ru="Кристаллические решётки" data-kk="Кристалдық торлар">Кристаллические решётки</button>
+        <button type="button" id="quizTopicVsepr" class="btn secondary cm-i18n" aria-pressed="false" data-ru="Геометрия молекул · VSEPR" data-kk="Молекулалар геометриясы · VSEPR">Геометрия молекул · VSEPR</button>
+      </div>
+      <div class="notice cm-i18n" id="quizLessonNote" data-ru="Crystal Lab: 6 входных заданий, 6 тренировочных и 6 итоговых. Проверяем тип решётки, связь, электрическую проводимость и свойства веществ. Результаты сохраняются отдельно от VSEPR." data-kk="Crystal Lab: 6 бастапқы, 6 жаттығу және 6 қорытынды тапсырма. Тор типін, байланысты, электрөткізгіштікті және зат қасиеттерін тексереміз. Нәтижелер VSEPR-ден бөлек сақталады.">Crystal Lab: 6 входных заданий, 6 тренировочных и 6 итоговых. Проверяем тип решётки, связь, электрическую проводимость и свойства веществ. Результаты сохраняются отдельно от VSEPR.</div>
+      <div id="crTest" class="cr-pane">
+        <div id="crTestSetup" class="card">
+          <h2 id="crTestTitle"></h2><p id="crTestIntro"></p>
+          <label class="field" id="crCodeLabel" for="crCode"></label>
+          <div class="student"><div class="code"><input id="crCode" type="text" maxlength="12" autocomplete="off" placeholder="4827"></div><button type="button" class="btn secondary" id="crGenCode"></button></div>
+          <p class="small muted" id="crCodeHint"></p>
+          <div class="grid">
+            <div class="concept"><h3 id="crPreTitle"></h3><p id="crPreDesc"></p><button type="button" class="btn" data-crmode="pre" id="crStartPre"></button></div>
+            <div class="concept"><h3 id="crPracticeTitle"></h3><p id="crPracticeDesc"></p><button type="button" class="btn secondary" data-crmode="practice" id="crStartPractice"></button></div>
+            <div class="concept"><h3 id="crPostTitle"></h3><p id="crPostDesc"></p><button type="button" class="btn secondary" data-crmode="post" id="crStartPost"></button></div>
+          </div>
+        </div>
+        <div id="crTesting" class="card hidden">
+          <div class="cr-row"><span class="tag" id="crTestMode"></span><span class="muted" id="crTestCounter"></span></div>
+          <div class="progressline" style="margin:16px 0 22px"><div id="crTestProgress" style="width:0%"></div></div>
+          <span class="eyebrow" id="crQuestionLabel"></span>
+          <h2 id="crQuestionText"></h2><div id="crAnswers" class="cr-answers"></div>
+          <div id="crAnswerFeedback" aria-live="polite"></div>
+          <div class="actions"><button type="button" class="btn" id="crAnswerCheck"></button><button type="button" class="btn secondary hidden" id="crAnswerNext"></button><button type="button" class="btn ghost" id="crCancelTest"></button></div>
+        </div>
+        <div id="crTestFinished" class="card hidden" aria-live="polite"></div>
+      </div>
+      <div id="vsQuizWrap" class="hidden">
+
+      <div class="section-head"><div><span class="eyebrow">Практика и диагностика</span><h1>Проверь химическую логику</h1><p>Выбирай две геометрии: электронную и молекулярную.</p></div></div>
+      <div class="card" id="setup">
+        <h2>Выбери режим</h2>
+        <p>В тестах объяснения открываются только после завершения. В тренировке обратная связь мгновенная.</p>
+        <div class="student">
+          <div class="code"><label for="studentCode">Анонимный код ученика</label><input id="studentCode" maxlength="12" autocomplete="off" aria-describedby="privacy" placeholder="Например, 4827" /></div>
+          <button class="btn secondary" id="generateCode">Создать случайный код</button>
+        </div>
+        <p id="privacy" class="small">Запомни код и используй тот же код для итогового теста. Не вписывай имя, фамилию и телефон.</p>
+        <div class="grid" style="margin-top:20px">
+          <div class="concept"><h3>Входной тест</h3><p>6 заданий до обучения.</p><button class="btn" style="margin-top:15px" data-mode="pre">Начать</button></div>
+          <div class="concept"><h3>Тренировка</h3><p>13 молекул, проверка после каждого ответа.</p><button class="btn secondary" style="margin-top:15px" data-mode="practice">Тренироваться</button></div>
+          <div class="concept"><h3>Итоговый тест</h3><p>6 других молекул аналогичной сложности.</p><button class="btn secondary" style="margin-top:15px" data-mode="post">Начать</button></div>
+        </div>
+      </div>
+      <div class="hidden" id="quizArea">
+        <div class="card" style="margin-bottom:16px">
+          <div class="question-head"><div><span class="tag" id="modeName"></span> <span class="small muted" id="counter"></span></div><button class="btn ghost" id="stopQuiz">Закончить без сохранения</button></div>
+          <div class="progressline" aria-label="Выполнение теста"><div id="progressFill" style="width:0%"></div></div>
+        </div>
+        <div class="quiz-grid">
+          <div class="card"><h2 id="moleculeName">Молекула</h2><div class="molecule-panel" id="moleculeVisual"></div><p class="small" style="margin:14px 0 0">Схема для ориентира: расположение условное, масштаб и углы не соблюдены.</p></div>
+          <div class="card">
+            <div class="eyebrow">Задание</div><h2>Определи две геометрии</h2>
+            <p id="taskDescription">Выбери правильные формы.</p>
+            <label class="field" for="electronAnswer">1. Электронная геометрия</label>
+            <select id="electronAnswer"><option value="">— Выбрать —</option></select>
+            <label class="field" for="molecularAnswer">2. Молекулярная геометрия</label>
+            <select id="molecularAnswer"><option value="">— Выбрать —</option></select>
+            <div id="feedback" aria-live="polite"></div>
+            <div class="actions"><button class="btn" id="checkAnswer">Проверить</button><button class="btn secondary hidden" id="nextQuestion">Следующее задание →</button></div>
+          </div>
+        </div>
+      </div>
+      <div id="finish" class="card hidden" aria-live="polite"></div>
+    
+      </div>
+    </section>
+
+    <section id="crystal" class="page hidden">
+      <div class="section-head">
+        <div><span class="eyebrow" id="crEyebrow"></span><h1 id="crTitle"></h1><p id="crSubtitle" class="lead"></p></div>
+        <span class="tag">10.1.4.11</span>
+      </div>
+      <div class="cr-tabs" role="group" aria-label="Crystal Lab">
+        <button type="button" class="btn" data-crtab="explore" id="crTabExplore"></button>
+        <button type="button" class="btn secondary" data-crtab="predict" id="crTabPredict"></button>
+        <button type="button" class="btn secondary" data-crtab="test" id="crTabTest"></button>
+      </div>
+      <div id="crExplore" class="cr-pane">
+        <div class="grid two" id="crConcepts"></div>
+        <div class="cr-stage" style="margin-top:18px">
+          <div class="card">
+            <div class="cr-row"><h2 id="crViewerTitle"></h2><span class="tag" id="crViewerFormula"></span></div>
+            <div class="cr-row cr-choose" id="crSampleButtons"></div>
+            <div class="cr-view">
+              <canvas id="crCanvas" role="img" aria-label="Rotatable crystal lattice model"></canvas>
+              <span class="cr-axis-tag" id="crViewOverlay"></span>
+            </div>
+            <div class="cr-row" style="margin-top:12px;justify-content:space-between;align-items:center">
+              <div class="muted small" id="crDragHint"></div>
+              <button type="button" class="btn ghost" id="crReset"></button>
+            </div>
+            <div class="cr-legend" id="crLegend"></div>
+            <p class="small muted" id="crModelCaveat"></p>
+          </div>
+          <div class="card">
+            <span class="eyebrow" id="crObserve"></span>
+            <h2 id="crStructTitle"></h2>
+            <p id="crStructure"></p>
+            <h3 id="crBondHeading"></h3><p id="crBond"></p>
+            <h3 id="crPropertiesHeading"></h3><p id="crProperties"></p>
+            <h3 id="crReasonHeading"></h3><p id="crReason"></p>
+            <div class="notice" id="crException"></div>
+            <button class="btn" type="button" id="crGoPredict"></button>
+          </div>
+        </div>
+      </div>
+      <div id="crPredict" class="cr-pane hidden">
+        <div class="card">
+          <span class="eyebrow" id="crPredictEyebrow"></span>
+          <h2 id="crPredictTitle"></h2><p id="crPredictIntro"></p>
+          <div class="cr-row cr-choose" id="crPredictSampleButtons"></div>
+          <div class="cr-predict-grid">
+            <div><label class="field" id="crTypeLabel" for="crTypeSelect"></label><select id="crTypeSelect"></select></div>
+            <div><label class="field" id="crConductLabel" for="crConductSelect"></label><select id="crConductSelect"></select></div>
+            <div><label class="field" id="crMeltLabel" for="crMeltSelect"></label><select id="crMeltSelect"></select></div>
+          </div>
+          <div class="actions"><button type="button" class="btn" id="crCheckPrediction"></button><button type="button" class="btn secondary" id="crNextSample"></button></div>
+          <div id="crPredictionFeedback" aria-live="polite"></div>
+          <p class="small muted" id="crPredictNote" style="margin-top:14px"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="page hidden">
+      <div class="section-head"><div><span class="eyebrow">Педагогическая аналитика</span><h1>Результаты диагностики</h1><p>Данные хранятся только в этом браузере. На разных компьютерах статистика автоматически не объединяется.</p></div><div class="actions"><button class="btn" id="exportCsv">Экспорт CSV</button><button class="btn danger" id="clearData">Очистить данные</button></div></div>
+      <div class="card" style="margin-top:20px">
+        <div class="cr-row"><div><span class="eyebrow">CRYSTAL LAB · 10.1.4.11</span><h2 id="crResultsHeading"></h2></div>
+          <div class="actions"><button class="btn secondary" id="crExportResults"></button><button class="btn danger" id="crClearResults"></button></div>
+        </div>
+        <p class="small" id="crResultsHelp"></p>
+        <div id="crResultsTable"></div>
+      </div>
+      <div class="card" style="margin-top:20px"><span class="eyebrow cm-i18n" data-ru="VSEPR · ДРУГОЙ МОДУЛЬ" data-kk="VSEPR · БАСҚА МОДУЛЬ">VSEPR · ДРУГОЙ МОДУЛЬ</span><h2 class="cm-i18n" data-ru="Результаты по геометрии молекул" data-kk="Молекулалар геометриясының нәтижелері">Результаты по геометрии молекул</h2><div id="dashboard"></div></div>
+      <div class="notice">Для сравнения используйте пары «входной — итоговый» по одному случайному коду. Улучшение баллов ещё не доказывает, что его вызвала только платформа: учитывайте практику, объяснения учителя и небольшую выборку.</div>
+    </section>
+
+    <section id="author" class="page hidden" aria-labelledby="authorHeading">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow cm-i18n" data-ru="JAS USTAZ DIGITAL · 2026" data-kk="JAS USTAZ DIGITAL · 2026">JAS USTAZ DIGITAL · 2026</span>
+          <h1 id="authorHeading" class="cm-i18n" data-ru="Об авторе и проекте" data-kk="Автор және жоба туралы">Об авторе и проекте</h1>
+          <p class="lead cm-i18n" data-ru="Данные об авторе, цель платформы и прозрачное описание применения ИИ." data-kk="Автор туралы мәлімет, платформаның мақсаты және ЖИ қолданылуы туралы ашық ақпарат.">Данные об авторе, цель платформы и прозрачное описание применения ИИ.</p>
+        </div>
+        <span class="tag">ChemMind · 2026</span>
+      </div>
+      <div class="card about-cover">
+        <div style="display:flex;gap:15px;align-items:center;position:relative;z-index:1;flex-wrap:wrap">
+          <div class="author-icon" aria-hidden="true">⚛</div>
+          <div>
+            <span class="eyebrow cm-i18n" data-ru="Автор образовательной платформы" data-kk="Білім беру платформасының авторы">Автор образовательной платформы</span>
+            <div class="author-name" id="authorDisplayName">Қажымұхан Жанкожа Бақтыбайұлы</div>
+            <div class="muted cm-i18n" data-ru="Учитель химии / 10 класс" data-kk="Химия пәнінің мұғалімі / 10-сынып">Учитель химии / 10 класс</div>
+          </div>
+        </div>
+        <div class="about-meta" style="position:relative;z-index:1">
+          <div><small class="cm-i18n" data-ru="Организация образования" data-kk="Білім беру ұйымы">Организация образования</small><strong id="authorDisplaySchool">«Талапкер ауылының мектеп-гимназиясы» КММ</strong></div>
+          <div><small class="cm-i18n" data-ru="Регион / район" data-kk="Облыс / аудан">Регион / район</small><strong id="authorDisplayLocation">Ақмола облысы</strong></div>
+          <div><small class="cm-i18n" data-ru="Направление" data-kk="Бағыт">Направление</small><strong class="cm-i18n" data-ru="Цифровой образовательный продукт" data-kk="Цифрлық білім беру өнімі">Цифровой образовательный продукт</strong></div>
+          <div><small class="cm-i18n" data-ru="Учебная цель" data-kk="Оқу мақсаты">Учебная цель</small><strong>10.1.4.11 · Crystal Lab</strong></div>
+        </div>
+      </div>
+      <div class="about-layout">
+        <div class="card">
+          <span class="eyebrow cm-i18n" data-ru="Настройки авторства" data-kk="Автор туралы деректерді өңдеу">Настройки авторства</span>
+          <h2 class="cm-i18n" data-ru="Данные для титульной страницы" data-kk="Титул бетіне арналған мәліметтер">Данные для титульной страницы</h2>
+          <p class="small cm-i18n" data-ru="Проверь внесённые Ф. И. О. и название школы по официальным документам. При необходимости исправь их; перед конкурсом сохрани файл с подтверждёнными данными." data-kk="Толық аты-жөнің мен мектеп атауының ресми құжаттарға сәйкестігін тексер. Қажет болса түзет; конкурс алдында расталған мәліметтері бар файлды сақта.">Проверь внесённые Ф. И. О. и название школы по официальным документам. При необходимости исправь их; перед конкурсом сохрани файл с подтверждёнными данными.</p>
+          <div class="author-edit">
+            <div class="full"><label class="field cm-i18n" for="authorInputName" data-ru="Ф. И. О. автора" data-kk="Автордың толық аты-жөні">Ф. И. О. автора</label><input id="authorInputName" maxlength="150" autocomplete="off" value="Қажымұхан Жанкожа Бақтыбайұлы" /></div>
+            <div class="full"><label class="field cm-i18n" for="authorInputSchool" data-ru="Официальное название школы" data-kk="Мектептің ресми атауы">Официальное название школы</label><input id="authorInputSchool" maxlength="250" autocomplete="off" value="«Талапкер ауылының мектеп-гимназиясы» КММ" /></div>
+            <div><label class="field cm-i18n" for="authorInputRegion" data-ru="Область" data-kk="Облыс">Область</label><input id="authorInputRegion" maxlength="120" value="Ақмола облысы" /></div>
+            <div><label class="field cm-i18n" for="authorInputDistrict" data-ru="Район / город" data-kk="Аудан / қала">Район / город</label><input id="authorInputDistrict" maxlength="130" /></div>
+          </div>
+          <div class="actions">
+            <button id="authorSave" type="button" class="btn cm-i18n" data-ru="Сохранить сведения" data-kk="Мәліметтерді сақтау">Сохранить сведения</button>
+            <button id="authorExportHtml" type="button" class="btn secondary cm-i18n" data-ru="Скачать версию с именем" data-kk="Аты-жөні бар нұсқаны жүктеу">Скачать версию с именем</button>
+          </div>
+          <div id="authorSaveNotice" role="status" aria-live="polite"></div>
+          <p class="note-legal cm-i18n" data-ru="Для официальной заявки используйте полное Ф. И. О. и название школы согласно документам. Сохранение в браузере само по себе не меняет исходный HTML-файл." data-kk="Ресми өтінімде құжаттағы толық аты-жөнің мен мектеп атауын қолдан. Браузерде сақтау бастапқы HTML файлын өзгертпейді.">Для официальной заявки используйте полное Ф. И. О. и название школы согласно документам. Сохранение в браузере само по себе не меняет исходный HTML-файл.</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow cm-i18n" data-ru="ПРОЗРАЧНОСТЬ И АВТОРСТВО" data-kk="АШЫҚТЫҚ ЖӘНЕ АВТОРЛЫҚ">ПРОЗРАЧНОСТЬ И АВТОРСТВО</span>
+          <h2 class="cm-i18n" data-ru="Как создавался ChemMind" data-kk="ChemMind қалай әзірленді">Как создавался ChemMind</h2>
+          <div class="about-rule">
+            <strong class="cm-i18n" data-ru="Педагогическая идея" data-kk="Педагогикалық идея">Педагогическая идея</strong>
+            <p class="cm-i18n" data-ru="Интерактивное обучение химии: VSEPR и кристаллические решётки, 3D-визуализация, задания, диагностика и обратная связь." data-kk="Химияны интерактивті оқыту: VSEPR және кристалдық торлар, 3D-көрнекілік, тапсырмалар, диагностика және кері байланыс.">Интерактивное обучение химии: VSEPR и кристаллические решётки, 3D-визуализация, задания, диагностика и обратная связь.</p>
+          </div>
+          <div class="about-rule">
+            <strong class="cm-i18n" data-ru="Применение ИИ" data-kk="Жасанды интеллектті қолдану">Применение ИИ</strong>
+            <p class="cm-i18n" data-ru="ChatGPT использовался для помощи в написании и изменении HTML/CSS/JavaScript, разработке интерфейса и учебного содержания. Результаты требуют проверки и доработки педагогом." data-kk="ChatGPT HTML/CSS/JavaScript кодын жазуға және өзгертуге, интерфейс пен оқу мазмұнын дайындауға көмектесті. Нәтижелерді мұғалім тексеріп, толықтыруы қажет.">ChatGPT использовался для помощи в написании и изменении HTML/CSS/JavaScript, разработке интерфейса и учебного содержания. Результаты требуют проверки и доработки педагогом.</p>
+          </div>
+          <div class="about-rule">
+            <strong class="cm-i18n" data-ru="Данные и безопасность" data-kk="Деректер және қауіпсіздік">Данные и безопасность</strong>
+            <p class="cm-i18n" data-ru="Результаты тестов сохраняются локально в браузере и выгружаются в CSV. Ученикам выдаются случайные коды: персональные данные учащихся не запрашиваются." data-kk="Тест нәтижелері браузерде жергілікті сақталып, CSV файлына шығарылады. Оқушыларға кездейсоқ кодтар беріледі: оқушының жеке деректері сұралмайды.">Результаты тестов сохраняются локально в браузере и выгружаются в CSV. Ученикам выдаются случайные коды: персональные данные учащихся не запрашиваются.</p>
+          </div>
+          <div class="actions"><button id="authorDraft" type="button" class="btn secondary cm-i18n" data-ru="Скачать черновик справки об ИИ" data-kk="ЖИ туралы анықтама жобасын жүктеу">Скачать черновик справки об ИИ</button></div>
+          <p class="note-legal cm-i18n" data-ru="Для конкурса: приложение 4 положения. Черновик нужно проверить, дополнить собственным вкладом и подписать. Он не заменяет официальную форму." data-kk="Конкурс үшін: ереженің 4-қосымшасы. Жобаны тексеріп, жеке үлесіңді нақтылап, қол қою қажет. Ол ресми нысанды алмастырмайды.">Для конкурса: приложение 4 положения. Черновик нужно проверить, дополнить собственным вкладом и подписать. Он не заменяет официальную форму.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap"><span class="author-footer" id="footerAuthor">ChemMind · Автор проекта: Қажымұхан Жанкожа Бақтыбайұлы</span>ChemMind • Учебный прототип • Без аккаунтов, сторонних библиотек и передачи данных на сервер. Правила и объяснения должны быть проверены педагогом перед использованием.</div></footer>
+<script>
+// ChemMind i18n: all translations are local; no network requests.
+const STATIC_KK = {"ChemMind — геометрия молекул":"ChemMind — молекулалардың геометриясы","Главная":"Басты бет","Теория":"Теория","Конструктор":"Құрастырғыш","Тренировка и тесты":"Жаттығу және тесттер","Результаты":"Нәтижелер","Учебная версия • 10 класс":"Оқу нұсқасы • 10-сынып","Учись понимать, а не угадывать":"Болжамай, түсініп үйрен","Химия становится понятной!":"Химия түсінікті бола түседі!","ChemMind помогает отличать электронную геометрию от молекулярной, выявляет тип ошибки и объясняет причину.":"ChemMind электрондық және молекулалық геометрияны ажыратуға, қате түрін анықтауға және оның себебін түсінуге көмектеседі.","Начать входной тест →":"Бастапқы тестті бастау →","Открыть теорию":"Теорияны ашу","3 связи + 1 неподелённая пара → пирамида":"3 байланыс + 1 бөлінбеген электрон жұбы → пирамида","01 — ДИАГНОСТИКА":"01 — ДИАГНОСТИКА","Определи исходный уровень":"Бастапқы біліміңді анықта","6 заданий до изучения темы, без подсказок.":"Тақырыпты оқуға дейінгі 6 тапсырма, көмексіз.","02 — ОБУЧЕНИЕ":"02 — ОҚЫТУ","Разбери причины ошибок":"Қателердің себебін түсін","Модели AXE, геометрия электронных областей и форма молекул.":"AXE модельдері, электрондық аймақтардың геометриясы және молекула пішіні.","03 — РЕЗУЛЬТАТ":"03 — НӘТИЖЕ","Измерь изменение":"Өзгерісті өлше","6 сопоставимых заданий после тренировки и сравнение баллов.":"Жаттығудан кейінгі салыстырмалы 6 тапсырма және ұпайларды салыстыру.","Рекомендуемый порядок:":"Ұсынылатын рет:","входной тест → теория → тренировка → итоговый тест. Не вводите ФИО учеников. Используйте только случайный код.":"бастапқы тест → теория → жаттығу → қорытынды тест. Оқушылардың аты-жөнін енгізбеңіз. Тек кездейсоқ код пайдаланыңыз.","Модуль 01":"01-модуль","Геометрия молекул: VSEPR":"Молекулалардың геометриясы: VSEPR","Электронные области отталкиваются и располагаются как можно дальше друг от друга.":"Электрондық аймақтар бір-бірінен тебіліп, барынша алыс орналасуға ұмтылады.","Перейти к практике →":"Практикаға өту →","Электронная геометрия":"Электрондық геометрия","Учитывает":"Ескереді","все":"барлық","электронные области центрального атома: связи и неподелённые пары.":"орталық атомның электрондық аймақтарын: байланыстар мен бөлінбеген электрон жұптарын.","Молекулярная геометрия":"Молекулалық геометрия","Учитывает положение":"Орналасуын ескереді","атомов":"атомдардың",". Неподелённые пары влияют на углы, но не считаются вершинами формы молекулы.":". Бөлінбеген электрон жұптары бұрыштарға әсер етеді, бірақ молекула пішінінің төбелері болып саналмайды.","Обозначение AXE":"AXE белгіленуі","— центральный атом;":"— орталық атом;","— число связанных с ним атомов;":"— онымен байланысқан атомдар саны;","— число неподелённых пар на A.":"— A атомындағы бөлінбеген электрон жұптарының саны.","Кратная связь":"Еселік байланыс","В VSEPR двойная или тройная связь рассматривается как":"VSEPR теориясында қос немесе үштік байланыс","одна электронная область":"бір электрондық аймақ",", а не две или три.":"ретінде қарастырылады, екі не үш аймақ ретінде емес.","Запомни пять основных случаев":"Негізгі бес жағдайды есте сақта","Форма молекулы":"Молекула пішіні","Пример":"Мысал","Линейная":"Сызықтық","Тригонально-плоская":"Үшбұрышты жазық","Тетраэдрическая":"Тетраэдрлік","Тригонально-пирамидальная":"Үшбұрышты пирамидалық","Угловая":"Бұрыштық","Важно: реальные валентные углы зависят от конкретной молекулы. Схематические изображения в заданиях и пространственная модель ниже идеализированы.":"Маңызды: нақты валенттік бұрыштар молекулаға байланысты. Тапсырмалардағы сызбалар мен төмендегі кеңістіктік модель идеалдандырылған.","Начать тренировку":"Жаттығуды бастау","Калькулятор Гиллеспи (VSEPR)":"Гиллеспи калькуляторы (VSEPR)","Выбери количество связанных атомов и неподелённых пар.":"Байланысқан атомдар мен бөлінбеген электрон жұптарының санын таңда.","Количество связанных атомов X":"Байланысқан атомдар саны X","Количество неподелённых пар E":"Бөлінбеген электрон жұптарының саны E","3D-модель VSEPR":"VSEPR 3D-моделі","Перетаскивай мышкой, чтобы вращать модель. Зелёные точки показывают неподелённые электронные пары.":"Модельді айналдыру үшін тінтуірмен сүйре. Жасыл нүктелер бөлінбеген электрон жұптарын көрсетеді.","Сбросить вращение ↺":"Айналдыруды бастапқы күйге қайтару ↺","Учебная модель: направления идеализированы, реальные длины связей и углы могут отличаться.":"Оқу моделі: бағыттар идеалдандырылған, нақты байланыс ұзындықтары мен бұрыштары өзгеше болуы мүмкін.","Инженерная практика • VSEPR":"Инженерлік практика • VSEPR","Конструктор молекул":"Молекула құрастырғышы","Собери вокруг центрального атома связанные атомы X и неподелённые пары E. Затем проверь, верно ли ты применил теорию Гиллеспи.":"Орталық атомның айналасына байланысқан X атомдарын және бөлінбеген E электрон жұптарын орналастыр. Содан кейін Гиллеспи теориясын дұрыс қолданғаныңды тексер.","1. Выбери молекулу":"1. Молекуланы таңда","Химическая формула":"Химиялық формула","NH₃ — аммиак":"NH₃ — аммиак","H₂O — вода":"H₂O — су","BF₃ — трифторид бора":"BF₃ — бор трифториді","CH₄ — метан":"CH₄ — метан","SO₂ — диоксид серы":"SO₂ — күкірт диоксиді","CO₂ — диоксид углерода":"CO₂ — көміртек диоксиді","PCl₃ — трихлорид фосфора":"PCl₃ — фосфор трихлориді","Сначала самостоятельно составь структуру Льюиса. Помни: одна двойная или тройная связь считается одной электронной областью.":"Алдымен Льюис құрылымын өзің құрастыр. Есіңде болсын: қос немесе үштік байланыс бір электрондық аймақ болып саналады.","2. Добавляй элементы":"2. Бөлшектерді қос","+ Связанный атом X":"+ Байланысқан атом X","− Убрать X":"− X атомын алып тастау","+ Неподелённая пара E":"+ Бөлінбеген жұп E","− Убрать E":"− E жұбын алып тастау","Твоя конструкция:":"Сен құрастырған модель:","Связанных атомов: 0 · неподелённых пар: 0":"Байланысқан атомдар: 0 · бөлінбеген жұптар: 0","Проверить конструкцию":"Құрылымды тексеру","Начать заново":"Қайта бастау","Посмотреть в 3D →":"3D түрінде көру →","Собранная модель":"Құрастырылған модель","Это схема областей вокруг центрального атома, а не модель действительных валентных углов. После проверки можно открыть вращаемую 3D-модель.":"Бұл — орталық атом айналасындағы аймақтардың сызбасы, нақты валенттік бұрыштар моделі емес. Тексеруден кейін айналмалы 3D-модельді ашуға болады.","Что здесь изучает ученик?":"Оқушы мұнда нені үйренеді?","Сначала считает электронные области, затем формирует обозначение AXE и сравнивает электронную и молекулярную геометрию.":"Алдымен электрондық аймақтарды санайды, содан кейін AXE белгіленуін құрастырып, электрондық және молекулалық геометрияны салыстырады.","Практика и диагностика":"Практика және диагностика","Проверь химическую логику":"Химиялық ойлауыңды тексер","Выбирай две геометрии: электронную и молекулярную.":"Екі геометрияны таңда: электрондық және молекулалық.","Выбери режим":"Режимді таңда","В тестах объяснения открываются только после завершения. В тренировке обратная связь мгновенная.":"Тесттерде түсіндірмелер аяқталғаннан кейін ғана ашылады. Жаттығуда кері байланыс бірден беріледі.","Анонимный код ученика":"Оқушының жасырын коды","Создать случайный код":"Кездейсоқ код жасау","Запомни код и используй тот же код для итогового теста. Не вписывай имя, фамилию и телефон.":"Кодты сақтап, қорытынды тестте сол кодты қолдан. Аты-жөніңді және телефон нөміріңді жазба.","Входной тест":"Бастапқы тест","6 заданий до обучения.":"Оқуға дейінгі 6 тапсырма.","Начать":"Бастау","Тренировка":"Жаттығу","13 молекул, проверка после каждого ответа.":"13 молекула, әр жауаптан кейін тексеру.","Тренироваться":"Жаттығу жасау","Итоговый тест":"Қорытынды тест","6 других молекул аналогичной сложности.":"Ұқсас күрделіліктегі тағы 6 молекула.","Закончить без сохранения":"Сақтамай аяқтау","Молекула":"Молекула","Схема для ориентира: расположение условное, масштаб и углы не соблюдены.":"Бағдарлауға арналған сызба: орналасуы шартты, масштаб пен бұрыштар сақталмаған.","Задание":"Тапсырма","Определи две геометрии":"Екі геометрияны анықта","Выбери правильные формы.":"Дұрыс пішіндерді таңда.","1. Электронная геометрия":"1. Электрондық геометрия","— Выбрать —":"— Таңдау —","2. Молекулярная геометрия":"2. Молекулалық геометрия","Проверить":"Тексеру","Следующее задание →":"Келесі тапсырма →","Педагогическая аналитика":"Педагогикалық талдау","Результаты диагностики":"Диагностика нәтижелері","Данные хранятся только в этом браузере. На разных компьютерах статистика автоматически не объединяется.":"Деректер тек осы браузерде сақталады. Әртүрлі компьютерлердегі статистика автоматты түрде біріктірілмейді.","Экспорт CSV":"CSV экспорттау","Очистить данные":"Деректерді тазалау","Для сравнения используйте пары «входной — итоговый» по одному случайному коду. Улучшение баллов ещё не доказывает, что его вызвала только платформа: учитывайте практику, объяснения учителя и небольшую выборку.":"Салыстыру үшін бір кездейсоқ кодпен тапсырылған бастапқы және қорытынды тест жұптарын пайдаланыңыз. Ұпайдың өсуі тек платформаның әсерін дәлелдемейді: жаттығуды, мұғалім түсіндірмесін және шағын іріктемені ескеріңіз.","ChemMind • Учебный прототип • Без аккаунтов, сторонних библиотек и передачи данных на сервер. Правила и объяснения должны быть проверены педагогом перед использованием.":"ChemMind • Оқу прототипі • Тіркеусіз, бөгде кітапханаларсыз және деректерді серверге жібермей жұмыс істейді. Ережелер мен түсіндірмелерді қолданар алдында мұғалім тексеруі тиіс.","Например, 4827":"Мысалы, 4827"};
+const LANG_MESSAGES = {"geo.linear":["Линейная","Сызықтық"],"geo.trigonal":["Тригонально-плоская","Үшбұрышты жазық"],"geo.tetra":["Тетраэдрическая","Тетраэдрлік"],"geo.pyramid":["Тригонально-пирамидальная","Үшбұрышты пирамидалық"],"geo.bent":["Угловая","Бұрыштық"],"saveError":["Не удалось сохранить данные в браузере. Возможно, хранилище отключено.","Деректер браузерге сақталмады. Сақтау мүмкіндігі өшірілген болуы мүмкін."],"codeError":["Введите случайный код из 4–12 латинских букв, цифр или дефисов. Не вводите ФИО.","Латын әріптері, цифрлар немесе сызықшалардан тұратын 4–12 таңбалы кездейсоқ код енгізіңіз. Аты-жөніңізді жазбаңыз."],"choose":["— Выбрать —","— Таңдау —"],"pre":["Входной тест","Бастапқы тест"],"post":["Итоговый тест","Қорытынды тест"],"practice":["Тренировка","Жаттығу"],"questionOf":["Вопрос {current} из {total}","{total} сұрақтың {current}-і"],"centerAtom":["Центральный атом: {center} · связанных атомов: {bonds}","Орталық атом: {center} · байланысқан атомдар: {bonds}"],"diagramAria":["Условная двухмерная схема молекулы {formula}","{formula} молекуласының шартты екіөлшемді сызбасы"],"formulaTask":["Определи электронные области самостоятельно по формуле.","Электрондық аймақтарды формула бойынша өзің анықта."],"findGeometries":["У центрального атома {center} найди геометрию электронных областей и молекулы.","Орталық {center} атомы үшін электрондық аймақтар мен молекуланың геометриясын анықта."],"cat.correct":["Верно","Дұрыс"],"cat.confusion":["Путаница двух геометрий","Екі геометрияны шатастыру"],"cat.electron":["Ошибка электронной геометрии","Электрондық геометриядағы қате"],"cat.molecular":["Ошибка молекулярной геометрии","Молекулалық геометриядағы қате"],"cat.areas":["Проверь электронные области","Электрондық аймақтарды тексер"],"exp.correct":["Отлично!","Жарайсың!"],"exp.confusion":["Ты выбрал расположение всех электронных областей вместо формы, образуемой только атомами. Неподелённые пары влияют на геометрию, но не показываются как атомы.","Сен тек атомдар түзетін пішіннің орнына барлық электрондық аймақтардың орналасуын таңдадың. Бөлінбеген жұптар геометрияға әсер етеді, бірақ атомдар ретінде көрсетілмейді."],"exp.electron":["Молекулярная форма определена правильно, но электронная геометрия должна учитывать связи И неподелённые пары.","Молекулалық пішін дұрыс анықталған, бірақ электрондық геометрия байланыстар мен бөлінбеген жұптардың екеуін де ескеруі тиіс."],"exp.molecular":["Ты верно определил геометрию электронных областей, но форму молекулы нужно определять по положениям связанных атомов.","Электрондық аймақтардың геометриясын дұрыс анықтадың, бірақ молекула пішіні байланысқан атомдардың орналасуымен анықталады."],"exp.areas":["Сначала посчитай связанные атомы X и неподелённые пары E на центральном атоме; после этого определи обе геометрии.","Алдымен орталық атомдағы байланысқан X атомдары мен бөлінбеген E жұптарын сана; содан кейін екі геометрияны анықта."],"chooseBoth":["Выбери оба ответа.","Екі жауапты да таңда."],"bothCorrect":["✓ Оба ответа верны!","✓ Екі жауап та дұрыс!"],"notQuite":["Не совсем: {category}","Әзірге дұрыс емес: {category}"],"answerExplanation":["Правильно: электронная — {electron}; молекулярная — {shape}. X = {bonds}; E = {lone}; формула — {formula}.","Дұрысы: электрондық — {electron}; молекулалық — {shape}. X = {bonds}; E = {lone}; формула — {formula}."],"accepted":["Ответ принят. В диагностике подсказки скрыты до окончания теста.","Жауап қабылданды. Диагностикада кеңестер тест аяқталғанша жасырын болады."],"finishButton":["Завершить →","Аяқтау →"],"nextButton":["Следующее задание →","Келесі тапсырма →"],"practiceDone":["Тренировка завершена","Жаттығу аяқталды"],"diagnosticDone":["Диагностика завершена","Диагностика аяқталды"],"score":["Результат: {correct} из {total} ({percent}%)","Дұрыс жауап: {correct} / {total} ({percent}%)"],"codeParticipant":["Код участника:","Қатысушы коды:"],"notSavedPractice":["Результат тренировки не записывается в журнал.","Жаттығу нәтижесі журналға жазылмайды."],"savedLocal":["Результат сохранён только в этом браузере.","Нәтиже тек осы браузерде сақталды."],"saveFailed":["Не удалось сохранить результат: проверь настройки браузера.","Нәтиже сақталмады: браузер параметрлерін тексер."],"mistakes":["Ошибки для повторения","Қайталауды қажет ететін қателер"],"correctLine":["Электронная — {electron}, молекулярная — {shape}.","Электрондық — {electron}, молекулалық — {shape}."],"allCorrect":["Все ответы верные!","Барлық жауап дұрыс!"],"chooseNextMode":["Выбрать следующий режим","Келесі режимді таңдау"],"showResults":["Посмотреть результаты","Нәтижелерді көру"],"noResultsTitle":["Пока нет сохранённых результатов","Әзірге сақталған нәтижелер жоқ"],"noResultsBody":["Пройди входной или итоговый тест, используя случайный код.","Кездейсоқ кодпен бастапқы немесе қорытынды тестті орында."],"randomCode":["Случайный код","Кездейсоқ код"],"before":["До, %","Дейін, %"],"after":["После, %","Кейін, %"],"changePoints":["Изменение, п.п.","Өзгеріс, п.т."],"needsPair":["Для сравнения требуется один входной и один итоговый тест с одинаковым анонимным кодом.","Салыстыру үшін бір жасырын кодпен орындалған бастапқы және қорытынды тест қажет."],"preCount":["Входных тестов","Бастапқы тесттер"],"postCount":["Итоговых тестов","Қорытынды тесттер"],"pairsCount":["Сопоставимых пар","Салыстырылатын жұптар"],"compareSame":["Сравнение одних и тех же кодов","Бірдей кодтар бойынша салыстыру"],"avgChange":["Среднее изменение для {count} сопоставимых пар:","{count} салыстырылатын жұп бойынша орташа өзгеріс:"],"pointSuffix":["процентных пункта","пайыздық тармақ"],"nonpairedExcluded":["Несопоставленные результаты исключены из этого среднего.","Жұпталмаған нәтижелер бұл орташаға кірмейді."],"nothingExport":["Пока нечего экспортировать.","Экспорттайтын дерек әзірге жоқ."],"confirmStop":["Прервать без сохранения текущих ответов?","Ағымдағы жауаптарды сақтамай тоқтатасыз ба?"],"confirmClear":["Удалить ВСЕ сохранённые результаты в этом браузере? Отменить это действие нельзя.","Осы браузердегі БАРЛЫҚ сақталған нәтижелерді өшіресіз бе? Бұл әрекетті қайтару мүмкін емес."],"axeUnsupported":["{formula} — эта комбинация пока не поддерживается.","{formula} — бұл комбинация әзірге қолдау таппайды."],"axeElectronic":["Электронная:","Электрондық:"],"axeMolecular":["Молекулярная:","Молекулалық:"],"buildCounts":["Связанных атомов: {x} · неподелённых пар: {e}","Байланысқан атомдар: {x} · бөлінбеген жұптар: {e}"],"builderAria":["{axe} — условная схема электронных областей","{axe} — электрондық аймақтардың шартты сызбасы"],"builderCorrect":["✓ Верно! {formula}: {axe}. Электронная геометрия — {electron}; молекулярная — {shape}. {note}","✓ Дұрыс! {formula}: {axe}. Электрондық геометрия — {electron}; молекулалық — {shape}. {note}"],"builderWrongBoth":["Проверь обе части: сколько отдельных атомов связано с центром и сколько неподелённых пар осталось после составления структуры Льюиса.","Екеуін де тексер: орталық атоммен қанша атом байланысқанын және Льюис құрылымында қанша бөлінбеген жұп қалғанын анықта."],"builderWrongX":["Проверь количество отдельных атомов, связанных с центром. Кратную связь считай одной областью.","Орталық атоммен байланысқан атомдар санын тексер. Еселік байланысты бір аймақ деп сана."],"builderWrongE":["Проверь количество неподелённых пар центрального атома по структуре Льюиса.","Льюис құрылымы бойынша орталық атомдағы бөлінбеген жұптар санын тексер."],"drawUnavailable":["3D-рисование не поддерживается этим браузером.","Бұл браузер 3D сызуды қолдамайды."],"drawNoModel":["Пока не поддерживается","Әзірге қолдау таппайды"],"drawLabel":["{formula} · {name} · пример: {example}","{formula} · {name} · мысал: {example}"],"drawNoMatch":["{formula}: пока нет 3D-модели для этой комбинации.","{formula}: бұл комбинацияға арналған 3D-модель әзірге жоқ."],"drawA":["A — центральный атом","A — орталық атом"],"drawX":["X — связанный атом    • • — неподелённая пара","X — байланысқан атом    • • — бөлінбеген жұп"],"csvYes":["да","иә"],"csvNo":["нет","жоқ"]};
+const NOTES_KK = {"co2":"Әрбір C=O қос байланысы бір электрондық аймақ болып саналады.","bf3":"Орталық B атомында үш байланыс бар, бөлінбеген жұп жоқ.","ch4":"Төрт C–H байланысы тетраэдрдің төбелеріне қарай бағытталған.","nh3":"Үш N–H байланысы және бір бөлінбеген жұп бар: молекула пішіні пирамидалық.","h2o":"Екі байланыс пен екі бөлінбеген жұп: электрондық геометриясы тетраэдрлік, молекуласы бұрыштық.","pcl3":"Фосфордың бір бөлінбеген жұбы молекулаға үшбұрышты пирамидалық пішін береді.","hcn":"C≡N үштік байланысы бір электрондық аймақ болып есептеледі.","bcl3":"Бор атомымен үш атом байланысқан, бөлінбеген жұп жоқ.","sih4":"Si айналасындағы төрт электрондық аймақ тетраэдрлік геометрия береді.","ph3":"Үш P–H байланысы және бір бөлінбеген жұп: үшбұрышты пирамида.","h2s":"Екі S–H байланысы және екі бөлінбеген жұп: молекула пішіні бұрыштық.","nf3":"N атомында бір бөлінбеген жұп бар: молекула пішіні пирамидалық.","so2":"S атомында екі байланыстырушы аймақ және бір бөлінбеген электрон жұбы бар."};
+const staticOrigins = new WeakMap();
+let currentLanguage = 'ru';
+function t(key, vars={}) {
+  const tuple=LANG_MESSAGES[key];
+  let value=tuple ? tuple[currentLanguage==='kk'?1:0] : key;
+  return value.replace(/\{(\w+)\}/g,(_,name)=>String(vars[name]??''));
+}
+function geo(k){return t('geo.'+k)}
+function note(m){return currentLanguage==='kk' ? NOTES_KK[m.id] || m.note : m.note}
+function translateStatic(root=document.body) {
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  let node;
+  while(node=walker.nextNode()){
+    if(['SCRIPT','STYLE'].includes(node.parentElement?.tagName))continue;
+    const previous=staticOrigins.get(node);
+    const initial=previous===undefined ? node.textContent.trim() : previous;
+    if(!Object.prototype.hasOwnProperty.call(STATIC_KK,initial))continue;
+    if(previous===undefined)staticOrigins.set(node,initial);
+    const old=node.textContent;
+    const prefix=old.match(/^\s*/)?.[0]??'';
+    const suffix=old.match(/\s*$/)?.[0]??'';
+    node.textContent=prefix+(currentLanguage==='kk'?STATIC_KK[initial]:initial)+suffix;
+  }
+  const student=document.getElementById('studentCode');
+  if(student)student.placeholder=currentLanguage==='kk'?'Мысалы, 4827':'Например, 4827';
+}
+function setLanguage(lang){
+  if(!['kk','ru'].includes(lang))return;
+  currentLanguage=lang;
+  document.documentElement.lang=lang;
+  document.title=lang==='kk'?'ChemMind — Кристалдық торлар және VSEPR':'ChemMind — Кристаллические решётки и VSEPR';
+  document.getElementById('langKk')?.setAttribute('aria-pressed',String(lang==='kk'));
+  document.getElementById('langRu')?.setAttribute('aria-pressed',String(lang==='ru'));
+  try{localStorage.setItem('chemmind_lang',lang)}catch(e){}
+  translateStatic();
+  document.dispatchEvent(new CustomEvent('chemmind:lang'));
+}
+document.getElementById('langKk').addEventListener('click',()=>setLanguage('kk'));
+document.getElementById('langRu').addEventListener('click',()=>setLanguage('ru'));
+</script>
+<script>
+'use strict';
+// ChemMind v1 — учебный исходный код. Автор конкурсного проекта должен проверить,
+// адаптировать и существенно доработать его. Создано с помощью ChatGPT.
+const GEO = {
+  linear: 'Линейная',
+  trigonal: 'Тригонально-плоская',
+  tetra: 'Тетраэдрическая',
+  pyramid: 'Тригонально-пирамидальная',
+  bent: 'Угловая'
+};
+const MOLECULES = [
+  {id:'co2',formula:'CO₂',center:'C',outer:['O','O'],bonds:2,lone:0,electron:'linear',shape:'linear',note:'Каждая двойная связь C=O — одна электронная область.'},
+  {id:'bf3',formula:'BF₃',center:'B',outer:['F','F','F'],bonds:3,lone:0,electron:'trigonal',shape:'trigonal',note:'У центрального B три связи и нет неподелённых пар.'},
+  {id:'ch4',formula:'CH₄',center:'C',outer:['H','H','H','H'],bonds:4,lone:0,electron:'tetra',shape:'tetra',note:'Четыре связи C–H направлены к вершинам тетраэдра.'},
+  {id:'nh3',formula:'NH₃',center:'N',outer:['H','H','H'],bonds:3,lone:1,electron:'tetra',shape:'pyramid',note:'Три связи N–H и одна неподелённая пара: молекула пирамидальная.'},
+  {id:'h2o',formula:'H₂O',center:'O',outer:['H','H'],bonds:2,lone:2,electron:'tetra',shape:'bent',note:'Две связи и две неподелённые пары: электронная геометрия тетраэдрическая, форма угловая.'},
+  {id:'pcl3',formula:'PCl₃',center:'P',outer:['Cl','Cl','Cl'],bonds:3,lone:1,electron:'tetra',shape:'pyramid',note:'Одна неподелённая пара фосфора делает форму тригонально-пирамидальной.'},
+  {id:'hcn',formula:'HCN',center:'C',outer:['H','N'],bonds:2,lone:0,electron:'linear',shape:'linear',note:'Тройная связь C≡N считается одной электронной областью.'},
+  {id:'bcl3',formula:'BCl₃',center:'B',outer:['Cl','Cl','Cl'],bonds:3,lone:0,electron:'trigonal',shape:'trigonal',note:'У бора три связанные атома и ни одной неподелённой пары.'},
+  {id:'sih4',formula:'SiH₄',center:'Si',outer:['H','H','H','H'],bonds:4,lone:0,electron:'tetra',shape:'tetra',note:'Четыре области вокруг Si дают тетраэдрическую геометрию.'},
+  {id:'ph3',formula:'PH₃',center:'P',outer:['H','H','H'],bonds:3,lone:1,electron:'tetra',shape:'pyramid',note:'Три связи P–H и одна неподелённая пара: тригональная пирамида.'},
+  {id:'h2s',formula:'H₂S',center:'S',outer:['H','H'],bonds:2,lone:2,electron:'tetra',shape:'bent',note:'Две связи S–H и две неподелённые пары: угловая молекула.'},
+  {id:'nf3',formula:'NF₃',center:'N',outer:['F','F','F'],bonds:3,lone:1,electron:'tetra',shape:'pyramid',note:'У N одна неподелённая пара: молекулярная форма пирамидальная.'},
+  {id:'so2',formula:'SO₂',center:'S',outer:['O','O'],bonds:2,lone:1,note:'У S две области связывания и одна неподелённая пара.'}
+];
+function predictVSEPR(m) {
+  const electronTypes = {2:'linear',3:'trigonal',4:'tetra'};
+  const shapes = {'2-0':'linear','3-0':'trigonal','4-0':'tetra','2-1':'bent','3-1':'pyramid','2-2':'bent'};
+  const electron = electronTypes[m.bonds + m.lone];
+  const shape = shapes[`${m.bonds}-${m.lone}`];
+  if (!electron || !shape) throw new Error('Неподдерживаемая комбинация: '+m.formula);
+  return {electron,shape};
+}
+MOLECULES.forEach(m => Object.assign(m, predictVSEPR(m)));
+const PRE = ['co2','bf3','ch4','nh3','h2o','pcl3'];
+const POST = ['hcn','bcl3','sih4','ph3','h2s','nf3'];
+const KEY = 'chemmind_v1_results';
+const $ = id => document.getElementById(id);
+let quiz = null;
+let feedbackShown = false;
+function safeRead(){try{const a=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(a)?a:[]}catch{return []}}
+function safeWrite(a){try{localStorage.setItem(KEY,JSON.stringify(a));return true}catch{alert(t('saveError'));return false}}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function go(tab){document.querySelectorAll('.page').forEach(el=>el.classList.toggle('hidden',el.id!==tab));document.querySelectorAll('.nav button').forEach(el=>el.classList.toggle('active',el.dataset.tab===tab));if(tab==='results')renderDashboard();window.scrollTo(0,0)}
+function makeCode(){return String(Math.floor(1000+Math.random()*9000))}
+function namesToOptions(sel,includeExtra){sel.innerHTML='<option value="">'+t('choose')+'</option>'+Object.keys(GEO).map(k=>[k,geo(k)]).filter(([k])=>includeExtra||!['pyramid','bent'].includes(k)).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}
+function start(mode){
+  let code=$('studentCode').value.trim().toUpperCase();
+  if(!/^[A-Z0-9-]{4,12}$/.test(code)){alert(t('codeError'));$('studentCode').focus();return}
+  const order=(mode==='pre'?PRE:mode==='post'?POST:MOLECULES.map(x=>x.id));
+  quiz={mode,code,ids:[...order],idx:0,answers:[],startedAt:new Date().toISOString()};feedbackShown=false;
+  $('setup').classList.add('hidden');$('finish').classList.add('hidden');$('quizArea').classList.remove('hidden');renderQuestion();
+}
+function moleculeSVG(m){
+  const positions={linear:[[60,112],[260,112]],trigonal:[[160,28],[72,174],[248,174]],tetra:[[160,27],[67,130],[252,130],[160,190]],pyramid:[[160,190],[65,145],[255,145]],bent:[[87,185],[233,185]]};
+  const spots=positions[m.shape];
+  const lines=spots.map(([x,y])=>`<line x1="160" y1="108" x2="${x}" y2="${y}" stroke="#8ba6ca" stroke-width="11" stroke-linecap="round" />`).join('');
+  const satellites=spots.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="22" fill="#e6edf9" stroke="#859cb8" stroke-width="2"/><text x="${x}" y="${y+6}" text-anchor="middle" font-size="${m.outer[i].length===2?'17':'21'}" font-weight="750" fill="#273c5b">${m.outer[i]}</text>`).join('');
+  const dots=Array.from({length:m.lone},(_,i)=>`<g fill="#6bf0c7"><circle cx="${144+i*29}" cy="${36+i*3}" r="4"/><circle cx="${153+i*29}" cy="${36+i*3}" r="4"/></g>`).join('');
+  return `<svg viewBox="0 0 320 225" role="img" aria-label="${t('diagramAria',{formula:m.formula})}"><g>${lines}</g><circle cx="160" cy="108" r="31" fill="#568cea" stroke="#aed0ff" stroke-width="2"/><text x="160" y="116" font-size="24" text-anchor="middle" font-weight="800" fill="white">${m.center}</text>${satellites}${dots}</svg><div class="molecule-caption">${t('centerAtom',{center:m.center,bonds:m.bonds})}</div>`;
+}
+function renderQuestion(){
+  const m=MOLECULES.find(x=>x.id===quiz.ids[quiz.idx]);feedbackShown=false;
+  $('modeName').textContent=t(quiz.mode);
+  $('counter').textContent=t('questionOf',{current:quiz.idx+1,total:quiz.ids.length});
+  $('progressFill').style.width=(quiz.idx/quiz.ids.length*100)+'%';
+  $('moleculeName').textContent=m.formula;
+  $('moleculeVisual').innerHTML=quiz.mode==='practice'?moleculeSVG(m):`<div style="padding:44px 12px"><div style="font-size:clamp(3.5rem,8vw,5.5rem);font-weight:850;letter-spacing:-.04em;color:#dceeff">${m.formula}</div><div class="molecule-caption">${t('formulaTask')}</div></div>`;
+  $('taskDescription').textContent=t('findGeometries',{center:m.center});
+  namesToOptions($('electronAnswer'),false);namesToOptions($('molecularAnswer'),true);
+  $('feedback').innerHTML='';$('checkAnswer').classList.remove('hidden');$('nextQuestion').classList.add('hidden');
+  $('electronAnswer').disabled=false;$('molecularAnswer').disabled=false;
+  $('electronAnswer').focus();
+}
+function diagnostic(m,e,s){
+  const eOk=e===m.electron,sOk=s===m.shape;
+  let key;
+  if(eOk&&sOk) key='correct';
+  else if(m.lone>0&&eOk&&s===m.electron) key='confusion';
+  else if(!eOk&&sOk) key='electron';
+  else if(eOk&&!sOk) key='molecular';
+  else key='areas';
+  return {correct:eOk&&sOk,key};
+}
+function showAnswerFeedback(m,d){
+  if(quiz.mode==='practice'){
+    const explanation=(d.key==='correct' ? note(m)+' ' : '')+t('exp.'+d.key);
+    $('feedback').innerHTML=`<div class="feedback ${d.correct?'':'error'}"><strong>${d.correct?t('bothCorrect'):t('notQuite',{category:t('cat.'+d.key)})}</strong><p>${escapeHtml(explanation)}</p><p><strong>${t('answerExplanation',{electron:geo(m.electron),shape:geo(m.shape),bonds:m.bonds,lone:m.lone,formula:axeLabel(m.bonds,m.lone)})}</strong></p></div>`;
+  } else $('feedback').innerHTML=`<div class="feedback">${t('accepted')}</div>`;
+  $('nextQuestion').textContent=quiz.idx===quiz.ids.length-1?t('finishButton'):t('nextButton');
+}
+function evaluate(){
+  if(feedbackShown)return;
+  const e=$('electronAnswer').value,s=$('molecularAnswer').value;
+  if(!e||!s){alert(t('chooseBoth'));return}
+  const m=MOLECULES.find(x=>x.id===quiz.ids[quiz.idx]);
+  const d=diagnostic(m,e,s);
+  quiz.answers.push({molecule:m.id,e,s,correct:d.correct,category:d.key});
+  feedbackShown=true;
+  showAnswerFeedback(m,d);
+  $('electronAnswer').disabled=true;$('molecularAnswer').disabled=true;
+  $('checkAnswer').classList.add('hidden');$('nextQuestion').classList.remove('hidden');
+}
+function next(){if(!feedbackShown)return;if(quiz.idx+1<quiz.ids.length){quiz.idx++;renderQuestion()}else finishQuiz()}
+let lastFinished = null;
+function finishQuiz(){
+  const correct=quiz.answers.filter(x=>x.correct).length,total=quiz.ids.length;
+  let saved=false;
+  if(quiz.mode!=='practice'){
+    const rows=safeRead();rows.push({code:quiz.code,mode:quiz.mode,createdAt:new Date().toISOString(),total,correct,answers:quiz.answers});saved=safeWrite(rows);
+  }
+  lastFinished={code:quiz.code,mode:quiz.mode,correct,total,saved,answers:quiz.answers};
+  $('quizArea').classList.add('hidden');$('finish').classList.remove('hidden');
+  renderFinished();
+  quiz=null;
+}
+function categoryText(cat){
+  const map={'Верно':'correct','Путаница двух геометрий':'confusion','Ошибка электронной геометрии':'electron','Ошибка молекулярной геометрии':'molecular','Проверь электронные области':'areas'};
+  return t('cat.'+(map[cat]||cat));
+}
+function renderFinished(){
+  if(!lastFinished)return;
+  const {correct,total,mode,code,saved,answers}=lastFinished;
+  const mistakes=answers.filter(a=>!a.correct);
+  let body=mistakes.length?`<h3>${t('mistakes')}</h3><ul class="summary-list">${mistakes.map(a=>{const m=MOLECULES.find(x=>x.id===a.molecule);return `<li><strong>${m.formula}</strong>: ${escapeHtml(categoryText(a.category))}. ${t('correctLine',{electron:geo(m.electron),shape:geo(m.shape)})}</li>`}).join('')}</ul>`:`<p>${t('allCorrect')}</p>`;
+  $('finish').innerHTML=`<span class="eyebrow">${t(mode==='practice'?'practiceDone':'diagnosticDone')}</span><h2>${t('score',{correct,total,percent:Math.round(correct/total*100)})}</h2><p>${t('codeParticipant')} <strong>${escapeHtml(code)}</strong>. ${t(mode==='practice'?'notSavedPractice':saved?'savedLocal':'saveFailed')}</p>${body}<div class="actions"><button class="btn" id="finishAgain">${t('chooseNextMode')}</button><button class="btn secondary" id="finishResults">${t('showResults')}</button></div>`;
+  $('finishAgain').addEventListener('click',resetQuiz);
+  $('finishResults').addEventListener('click',()=>{resetQuiz();go('results')});
+}
+function resetQuiz(){quiz=null;lastFinished=null;feedbackShown=false;$('quizArea').classList.add('hidden');$('finish').classList.add('hidden');$('setup').classList.remove('hidden');}
+function average(nums){return nums.length?Math.round(nums.reduce((a,b)=>a+b,0)/nums.length*10)/10:0}
+function renderDashboard(){
+  const records=safeRead();
+  if(!records.length){$('dashboard').innerHTML=`<div class="card empty"><h2>${t('noResultsTitle')}</h2><p>${t('noResultsBody')}</p></div>`;return}
+  const byCode=new Map();for(const r of records){if(!byCode.has(r.code))byCode.set(r.code,{});byCode.get(r.code)[r.mode]=r}
+  const pairs=[...byCode].filter(([code,x])=>x.pre&&x.post).map(([code,x])=>({code,pre:Math.round(100*x.pre.correct/x.pre.total),post:Math.round(100*x.post.correct/x.post.total)}));
+  const pre=records.filter(r=>r.mode==='pre');const post=records.filter(r=>r.mode==='post');
+  let body=pairs.length?`<div class="tablewrap"><table><thead><tr><th>${t('randomCode')}</th><th>${t('before')}</th><th>${t('after')}</th><th>${t('changePoints')}</th></tr></thead><tbody>${pairs.map(r=>`<tr><td>${escapeHtml(r.code)}</td><td>${r.pre}%</td><td>${r.post}%</td><td style="color:${r.post>=r.pre?'#9af0ba':'#ffabac'}">${r.post-r.pre>0?'+':''}${r.post-r.pre}</td></tr>`).join('')}</tbody></table></div>`:`<p>${t('needsPair')}</p>`;
+  const delta=pairs.length?Math.round(average(pairs.map(r=>r.post-r.pre))*10)/10:'—';
+  $('dashboard').innerHTML=`<div class="stats"><div class="stat"><span class="n">${pre.length}</span><span class="label">${t('preCount')}</span></div><div class="stat"><span class="n">${post.length}</span><span class="label">${t('postCount')}</span></div><div class="stat"><span class="n">${pairs.length}</span><span class="label">${t('pairsCount')}</span></div></div><div class="card"><h2>${t('compareSame')}</h2><p>${t('avgChange',{count:pairs.length})} <strong>${delta}${pairs.length?' '+t('pointSuffix'):''}</strong>. ${t('nonpairedExcluded')}</p>${body}</div>`;
+}
+function exportCSV(){
+  const rows=safeRead();if(!rows.length){alert(t('nothingExport'));return}
+  // Stable column IDs and mode keys facilitate bilingual result merging.
+  const headers=currentLanguage==='kk'?['Код','Кезең','Күні ISO','Дұрыс','Барлығы','Пайыз','Молекула','Электрондық жауап','Молекулалық жауап','Екі жауап та дұрыс','Қате түрі']:['Код','Этап','Дата ISO','Верно','Всего','Процент','Молекула','Электронный ответ','Молекулярный ответ','Оба ответа верны','Тип ошибки'];
+  const lines=[headers];
+  rows.forEach(r=>r.answers.forEach(a=>{let m=MOLECULES.find(x=>x.id===a.molecule);if(!m)return;lines.push([r.code,r.mode,r.createdAt,r.correct,r.total,Math.round(100*r.correct/r.total),m.formula,geo(a.e),geo(a.s),t(a.correct?'csvYes':'csvNo'),categoryText(a.category)])}));
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const csv='\ufeff'+lines.map(a=>a.map(q).join(';')).join('\r\n');
+  const u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download='chemmind_anon_results_'+currentLanguage+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+document.querySelectorAll('[data-start]').forEach(b=>b.addEventListener('click',()=>{go('quiz');start(b.dataset.start)}));
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>start(b.dataset.mode)));
+$('generateCode').addEventListener('click',()=>{$('studentCode').value=makeCode()});
+$('checkAnswer').addEventListener('click',evaluate);
+$('nextQuestion').addEventListener('click',next);
+$('stopQuiz').addEventListener('click',()=>{if(confirm(t('confirmStop')))resetQuiz()});
+$('exportCsv').addEventListener('click',exportCSV);
+$('clearData').addEventListener('click',()=>{if(confirm(t('confirmClear'))){safeWrite([]);renderDashboard()}});
+$('studentCode').value=makeCode();
+
+function calculateAXE() {
+  const x=Number($('axeX').value),e=Number($('axeE').value);
+  const keys={'2-0':['linear','linear'],'3-0':['trigonal','trigonal'],'4-0':['tetra','tetra'],'2-1':['trigonal','bent'],'3-1':['tetra','pyramid'],'2-2':['tetra','bent']};
+  const result=keys[x+'-'+e],formula=axeLabel(x,e);
+  $('axeResult').textContent=result?`${formula} | ${t('axeElectronic')} ${geo(result[0])} | ${t('axeMolecular')} ${geo(result[1])}`:t('axeUnsupported',{formula});
+}
+$('axeX').addEventListener('change',calculateAXE);
+$('axeE').addEventListener('change',calculateAXE);
+calculateAXE();
+// Учебная сборка модели. Здесь нет генеративного ИИ: проверка по авторским правилам.
+let buildX = 0;
+let buildE = 0;
+function axeLabel(x,e) {
+  const subs = s => String(s).replace(/\d/g,n=>'₀₁₂₃₄₅₆₇₈₉'[Number(n)]);
+  return 'AX'+subs(x)+(e ? 'E'+(e===1?'':subs(e)) : '');
+}
+function renderBuilder() {
+  builderWasChecked=false;
+  const m=MOLECULES.find(z=>z.id===$('buildTarget').value);
+  $('buildAXE').textContent=axeLabel(buildX,buildE);
+  $('buildCounts').textContent=t('buildCounts',{x:buildX,e:buildE});
+  const around=[];
+  for(let i=0;i<buildX;i++) around.push({type:'atom',symbol:m.outer[i]||'X'});
+  for(let i=0;i<buildE;i++) around.push({type:'pair'});
+  const r=94;
+  const figures=around.map((item,i)=>{
+    const angle=(-Math.PI/2 + i*2*Math.PI/Math.max(around.length,1));
+    const x=160+Math.cos(angle)*r,y=160+Math.sin(angle)*r;
+    if(item.type==='atom'){
+      return `<line x1="160" y1="160" x2="${x}" y2="${y}" stroke="#91afd1" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="${x}" cy="${y}" r="24" fill="#d9e7fb"/><text x="${x}" y="${y+7}" text-anchor="middle" fill="#143047" font-size="21" font-weight="800">${item.symbol}</text>`;
+    }
+    return `<line x1="160" y1="160" x2="${x}" y2="${y}" stroke="#4aaf9e" stroke-width="3" stroke-dasharray="4 7"/>
+    <circle cx="${x-9}" cy="${y}" r="7" fill="#63ebc1"/><circle cx="${x+9}" cy="${y}" r="7" fill="#63ebc1"/>`;
+  }).join('');
+  $('builderVisual').innerHTML=`<svg viewBox="0 0 320 320" role="img" aria-label="${t('builderAria',{axe:axeLabel(buildX,buildE)})}">
+    ${figures}<circle cx="160" cy="160" r="33" fill="#4c8be7" stroke="#9ec5ff" stroke-width="2"/>
+    <text x="160" y="169" text-anchor="middle" fill="#fff" font-size="26" font-weight="800">${m.center}</text></svg>`;
+  $('addX').disabled=buildX>=4||buildX+buildE>=4;
+  $('addE').disabled=buildE>=2||buildX+buildE>=4;
+  $('removeX').disabled=buildX<=0;
+  $('removeE').disabled=buildE<=0;
+  $('builderShow3d').classList.add('hidden');
+  $('builderFeedback').innerHTML='';
+}
+function modifyBuilder(which,delta) {
+  if(which==='X')buildX=Math.max(0,Math.min(4,buildX+delta));
+  else buildE=Math.max(0,Math.min(2,buildE+delta));
+  if(buildX+buildE>4){ if(which==='X') buildX--; else buildE--; }
+  renderBuilder();
+}
+let builderWasChecked=false;
+function checkBuilder() {
+  const m=MOLECULES.find(z=>z.id===$('buildTarget').value);
+  const correct=buildX===m.bonds&&buildE===m.lone;
+  const msg=correct?t('builderCorrect',{formula:m.formula,axe:axeLabel(buildX,buildE),electron:geo(m.electron),shape:geo(m.shape),note:note(m)}):t(buildX!==m.bonds&&buildE!==m.lone?'builderWrongBoth':buildX!==m.bonds?'builderWrongX':'builderWrongE');
+  $('builderFeedback').innerHTML=`<div class="feedback ${correct?'':'error'}">${escapeHtml(msg)}</div>`;
+  $('builderShow3d').classList.toggle('hidden',!correct);
+  builderWasChecked=true;
+}
+function showBuilderIn3D() {
+  $('axeX').value=String(buildX);$('axeE').value=String(buildE);
+  $('axeX').dispatchEvent(new Event('change',{bubbles:true}));
+  $('axeE').dispatchEvent(new Event('change',{bubbles:true}));
+  go('learn');
+  $('cm3d').scrollIntoView({behavior:'smooth',block:'center'});
+}
+$('buildTarget').addEventListener('change',()=>{buildX=0;buildE=0;renderBuilder()});
+$('addX').addEventListener('click',()=>modifyBuilder('X',1));
+$('removeX').addEventListener('click',()=>modifyBuilder('X',-1));
+$('addE').addEventListener('click',()=>modifyBuilder('E',1));
+$('removeE').addEventListener('click',()=>modifyBuilder('E',-1));
+$('checkBuilder').addEventListener('click',checkBuilder);
+$('clearBuilder').addEventListener('click',()=>{buildX=0;buildE=0;renderBuilder()});
+$('builderShow3d').addEventListener('click',showBuilderIn3D);
+renderBuilder();
+</script>
+<script>
+/* ChemMind — трехмерная схема VSEPR.
+   Честная учебная визуализация: направления электронных областей идеализированы;
+   реальные углы и размеры молекул могут отличаться. Без внешних библиотек. */
+(() => {
+  'use strict';
+  const canvas = document.getElementById('cm3d');
+  const xSelect = document.getElementById('axeX');
+  const eSelect = document.getElementById('axeE');
+  const label = document.getElementById('cm3dLabel');
+  const reset = document.getElementById('cm3dReset');
+  if (!canvas || !xSelect || !eSelect || !label) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) { label.textContent = t('drawUnavailable'); return; }
+
+  // Направления в трехмерном пространстве от центрального атома (A).
+  const tetra = [[1,1,1],[1,-1,-1],[-1,1,-1],[-1,-1,1]]
+    .map(v => v.map(n => n / Math.sqrt(3)));
+  const trigonal = [
+    [0,-1,0],
+    [Math.sqrt(3)/2,1/2,0],
+    [-Math.sqrt(3)/2,1/2,0]
+  ];
+  const geometry = {
+    '2-0': {vectors:[[-1,0,0],[1,0,0]], name:'Линейная', example:'CO₂'},
+    '3-0': {vectors:trigonal, name:'Тригонально-плоская', example:'BF₃'},
+    '4-0': {vectors:tetra, name:'Тетраэдрическая', example:'CH₄'},
+    '2-1': {vectors:trigonal, name:'Угловая', example:'SO₂'},
+    '3-1': {vectors:tetra, name:'Тригонально-пирамидальная', example:'NH₃'},
+    '2-2': {vectors:tetra, name:'Угловая', example:'H₂O'}
+  };
+
+  let yaw = 0.7, pitch = 0.25, dragging = false, lastX = 0, lastY = 0;
+  function rotate([x,y,z]) {
+    const c = Math.cos(yaw), s = Math.sin(yaw);
+    const xx = x*c + z*s, zz = -x*s + z*c;
+    const a = Math.cos(pitch), b = Math.sin(pitch);
+    return [xx, y*a - zz*b, y*b + zz*a];
+  }
+  function ball(x, y, radius, fill, text, ink = '#fff') {
+    const grad = ctx.createRadialGradient(x-radius/3,y-radius/2,1,x,y,radius);
+    grad.addColorStop(0,'#ffffff');grad.addColorStop(0.15,fill);grad.addColorStop(1,'#172c48');
+    ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);
+    ctx.fillStyle=grad;ctx.fill();ctx.strokeStyle='#9ab7d6';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle=ink;ctx.font='bold 16px system-ui, Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x,y+1);
+  }
+  function electronPair(x,y,depth) {
+    // Две точки показывают электронную пару, а не отдельный атом.
+    const r=7*(1+depth*.08);
+    for (const offset of [-r*.85,r*.85]) {
+      ctx.beginPath();ctx.arc(x+offset,y,r*.72,0,2*Math.PI);
+      ctx.fillStyle='#63ebc1';ctx.fill();
+      ctx.strokeStyle='#126f68';ctx.lineWidth=1;ctx.stroke();
+    }
+  }
+  function draw() {
+    const w = Math.max(200, Math.round(canvas.getBoundingClientRect().width));
+    const h = 320;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (canvas.width !== Math.round(w*dpr) || canvas.height !== Math.round(h*dpr)) {
+      canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+    const bg = ctx.createRadialGradient(w/2,h/2,30,w/2,h/2,w*.55);
+    bg.addColorStop(0,'#203954');bg.addColorStop(1,'#0e1b30');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+
+    const x=Number(xSelect.value), e=Number(eSelect.value), key=`${x}-${e}`;
+    const item=geometry[key];
+    const formula=`AX${x}${e ? `E${e===1?'':e}` : ''}`;
+    if (!item) {
+      label.textContent=t('drawNoMatch',{formula});
+      ctx.fillStyle='#afc7e2';ctx.font='17px system-ui, Arial';ctx.textAlign='center';
+      ctx.fillText(t('drawNoModel'),w/2,h/2);
+      return;
+    }
+    label.textContent=t('drawLabel',{formula,name:geo({'Линейная':'linear','Тригонально-плоская':'trigonal','Тетраэдрическая':'tetra','Угловая':'bent','Тригонально-пирамидальная':'pyramid'}[item.name]),example:item.example});
+    const unit = Math.min(w*.24,h*.34);
+    function project(v) {
+      const [xx,yy,zz] = rotate(v);
+      const perspective=2.8/(2.8-zz*.42);
+      return {x:w/2+xx*unit*perspective,y:h/2+yy*unit*perspective,z:zz,s:perspective};
+    }
+    const center=project([0,0,0]);
+    const spheres=item.vectors.map((v,i)=>({...project(v),kind:i<x?'atom':'pair'}));
+
+    // Рисуем связи/направления к центру, затем глубину объектов.
+    spheres.forEach(p=>{
+      ctx.beginPath();ctx.moveTo(center.x,center.y);ctx.lineTo(p.x,p.y);
+      ctx.lineWidth=p.kind==='atom'?11:3;
+      ctx.strokeStyle=p.kind==='atom'?'#8eaacd':'#4aaf9e';
+      ctx.setLineDash(p.kind==='atom'?[]:[5,7]);ctx.stroke();ctx.setLineDash([]);
+    });
+    [...spheres,{...center,kind:'center'}].sort((a,b)=>a.z-b.z).forEach(p=>{
+      if(p.kind==='center')ball(p.x,p.y,27,'#4488ec','A');
+      else if(p.kind==='pair')electronPair(p.x,p.y,p.z);
+      else ball(p.x,p.y,19*p.s,'#e5efff','X','#152b46');
+    });
+    ctx.fillStyle='#a3bdd9';ctx.font='13px system-ui, Arial';ctx.textAlign='left';
+    ctx.fillText(t('drawA'),16,h-44);
+    ctx.fillText(t('drawX'),16,h-22);
+  }
+  xSelect.addEventListener('change',draw);
+  eSelect.addEventListener('change',draw);
+  canvas.addEventListener('pointerdown',ev=>{
+    dragging=true;lastX=ev.clientX;lastY=ev.clientY;
+    canvas.setPointerCapture(ev.pointerId);
+    canvas.style.cursor='grabbing';
+  });
+  canvas.addEventListener('pointermove',ev=>{
+    if(!dragging)return;
+    yaw+=(ev.clientX-lastX)*.012;
+    pitch+=(ev.clientY-lastY)*.012;
+    pitch=Math.min(1.4,Math.max(-1.4,pitch));
+    lastX=ev.clientX;lastY=ev.clientY;
+    draw();
+  });
+  for (const eventName of ['pointerup','pointercancel','lostpointercapture']) {
+    canvas.addEventListener(eventName,()=>{dragging=false;canvas.style.cursor='grab';});
+  }
+  if(reset)reset.addEventListener('click',()=>{yaw=.7;pitch=.25;draw();});
+  window.addEventListener('resize',draw);
+  document.addEventListener('chemmind:lang',draw);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(draw).observe(canvas);
+  }
+  draw();
+})();
+
+</script>
+<script>
+// Restore language after all features are loaded.
+let savedLang='ru';try{savedLang=localStorage.getItem('chemmind_lang')||'ru'}catch(e){}
+function refreshLocalizedViews(){
+  // Static UI is translated before this function runs.
+  calculateAXE();
+  const wasChecked=builderWasChecked;
+  renderBuilder();
+  if(wasChecked)checkBuilder();
+  if(quiz){
+    const e=$('electronAnswer').value,s=$('molecularAnswer').value,wasAnswered=feedbackShown;
+    renderQuestion();
+    $('electronAnswer').value=e;$('molecularAnswer').value=s;
+    if(wasAnswered){
+      const m=MOLECULES.find(x=>x.id===quiz.ids[quiz.idx]);
+      feedbackShown=true;
+      showAnswerFeedback(m,diagnostic(m,e,s));
+      $('electronAnswer').disabled=true;$('molecularAnswer').disabled=true;
+      $('checkAnswer').classList.add('hidden');$('nextQuestion').classList.remove('hidden');
+    }
+  }
+  if(lastFinished)renderFinished();
+  if(!$('results').classList.contains('hidden'))renderDashboard();
+  translateStatic();
+}
+document.addEventListener('chemmind:lang',refreshLocalizedViews);
+setLanguage(savedLang);
+</script>
+<script>
+'use strict';
+/* ChemMind Crystal Lab, authored with assistance of ChatGPT.
+ * The 3D models are teaching diagrams, not atomistic simulations.
+ * No Internet access, third-party dependencies, or personal identifiers required.
+ */
+const CR = {
+  ru: {
+    nav:'Кристаллические решётки', homeTag:'НОВЫЙ МОДУЛЬ · 10 КЛАСС', homeTitle:'Crystal Lab: от строения к свойствам',
+    homeDesc:'Исследуй ионную, атомную, молекулярную и металлическую решётки в 3D. Сделай прогноз, проверь себя и сравни два теста.',homeOpen:'Открыть Crystal Lab →',
+    eyebrow:'МОДУЛЬ 02 · ХИМИЧЕСКАЯ СВЯЗЬ',title:'Кристаллические решётки',subtitle:'10.1.4.11 · Предсказывай свойства веществ по типу кристаллической решётки и химической связи.',
+    explore:'Исследовать 3D',predict:'Предсказать свойства',test:'Диагностика 6 + 6',
+    concept1h:'Ионная решётка', concept1:'В узлах находятся положительные и отрицательные ионы; их удерживает электростатическое притяжение.',
+    concept2h:'Атомная (ковалентная) решётка',concept2:'Атомы объединены в протяжённую сеть ковалентными связями. Пример — алмаз.',
+    concept3h:'Молекулярная решётка',concept3:'В узлах расположены молекулы. Между ними действуют межмолекулярные силы; внутри молекул могут быть ковалентные связи.',
+    concept4h:'Металлическая решётка',concept4:'Металлические атомные остовы удерживаются металлической связью с подвижными делокализованными электронами.',
+    viewerTitle:'Кристалл в пространстве',viewOverlay:'Условная модель · не в масштабе',dragHint:'Перетаскивай, чтобы вращать • колесо мыши — масштаб',reset:'Сбросить вид ↺',
+    observe:'СМОТРИ → ОБЪЯСНЯЙ',structTitle:'Что находится в узлах?',bondTitle:'Какая связь удерживает структуру?',propertiesTitle:'Какие свойства ожидаются?',reasonTitle:'Почему именно такие свойства?',goPredict:'Перейти к прогнозу →',
+    caveat:'Визуализация схематическая: размеры частиц, расстояния и число узлов условны. Соединительные линии у NaCl — ориентиры соседства, не ковалентные связи; металлические электроны показаны условно.',
+    sampleNaCl:'NaCl · ионная',sampleDiamond:'C · алмаз',sampleIodine:'I₂ · молекулярная',sampleCopper:'Cu · металлическая',
+    naStruct:'Чередующиеся катионы Na⁺ и анионы Cl⁻ образуют трёхмерную структуру.',naBond:'Ионная: притяжение противоположно заряженных ионов.',naProperties:'Хрупкий кристалл с относительно высокой температурой плавления. В твёрдом состоянии электрический ток почти не проводит; расплав и раствор — проводят.',naReason:'Ионы сильно притягиваются, но в твёрдом кристалле закреплены в узлах. В расплаве и растворе могут перемещаться.',naException:'NaCl — не отдельные молекулы NaCl, а ионный кристалл с соотношением Na:Cl = 1:1.',
+    diamondStruct:'Каждый атом углерода связан с четырьмя соседними атомами в трёхмерной тетраэдрической сети.',diamondBond:'Прочные направленные ковалентные связи C–C по всему кристаллу.',diamondProperties:'Очень твёрдый, электрический изолятор; структура исключительно устойчива к нагреванию.',diamondReason:'Для разрушения структуры необходимо разрывать множество прочных ковалентных связей.',diamondException:'При обычном давлении алмаз при сильном нагревании не просто «плавится» — возможны графитизация и сублимация; используем качественное сравнение устойчивости.',
+    iodineStruct:'В узлах молекулярного кристалла находятся отдельные молекулы I₂.',iodineBond:'Внутри I₂ — ковалентная связь, между молекулами — дисперсионные силы.',iodineProperties:'Сравнительно низкая температура плавления (около 114 °C), способен сублимировать; твёрдый иод практически не проводит ток.',iodineReason:'При плавлении разрушаются межмолекулярные взаимодействия, а не связь I–I внутри каждой молекулы.',iodineException:'«Молекулярный» относится к типу кристаллической решётки, а не означает отсутствие ковалентных связей.',
+    copperStruct:'Атомные остовы меди образуют упорядоченную металлическую решётку (ГЦК).',copperBond:'Металлическая связь с коллективными делокализованными электронами.',copperProperties:'Хорошо проводит электрический ток в твёрдом состоянии, пластичен, имеет металлический блеск.',copperReason:'Электроны способны перемещаться по кристаллу, а слои атомных остовов могут смещаться без полного разрушения связи.',copperException:'Точки «электронного газа» в модели символические: отдельные электроны не зафиксированы между определёнными атомами.',
+    sodium:'Na⁺',chloride:'Cl⁻',carbon:'C',iodine:'I',copper:'Cu',electron:'электроны',bondMark:'связь',
+    predictEyebrow:'ШАГ 2 · БОЛЖА → ЗЕРТТЕ → ДӘЛЕЛДЕ',predictTitle:'Предскажи свойства вещества',predictIntro:'Выбери образец и заполни три поля до проверки. Затем сравни гипотезу с моделью и объяснением.',
+    typeLabel:'Тип решётки',conductLabel:'Проводит электрический ток в твёрдом состоянии?',meltLabel:'Относительная термическая устойчивость решётки',choose:'— Выбери ответ —',
+    typeIonic:'Ионная',typeAtomic:'Атомная',typeMolecular:'Молекулярная',typeMetal:'Металлическая',yes:'Да',no:'Нет',high:'Высокая',low:'Низкая',
+    predictCheck:'Проверить прогноз',predictNext:'Другой образец →',predictNote:'Упрощённый школьный прогноз для четырёх примеров, а не универсальный закон: растворимость, проводимость и температура фазовых переходов зависят от конкретного вещества и условий.',
+    chooseAll:'Выбери все три свойства.',predictGreat:'Три прогноза совпали с ожидаемыми свойствами.',predictPartial:'Верных прогнозов: {correct} из 3.',predictExplain:'Разбор: {explanation}',
+    tTitle:'Входная и итоговая диагностика',tIntro:'По 6 разных заданий на сопоставимые умения. В тестах нет подсказок и обратной связи до окончания. Во время тренировки объяснения доступны сразу.',
+    codeLabel:'Анонимный код ученика',genCode:'Создать код',codeHint:'Используй один и тот же код во входном и итоговом тестах. Не записывай ФИО, телефон или другие персональные данные.',
+    preTitle:'Входной тест',preDesc:'6 заданий до изучения Crystal Lab',pracTitle:'Тренировка',pracDesc:'6 заданий с объяснениями после каждого ответа',postTitle:'Итоговый тест',postDesc:'6 других заданий такой же направленности',startBtn:'Начать →',
+    modePre:'Входной тест',modePost:'Итоговый тест',modePractice:'Тренировка',qLabel:'ЗАДАНИЕ · 10 КЛАСС',questionNum:'Вопрос {n} из {total}',check:'Проверить',next:'Следующий вопрос →',finish:'Завершить →',cancel:'Прервать без сохранения',
+    answerRequired:'Выбери один вариант ответа.',codeInvalid:'Укажи код из 4–12 латинских букв, цифр или дефисов.',sureCancel:'Прервать тест? Несохранённые ответы будут потеряны.',answerAccepted:'Ответ принят. Пояснение откроется после завершения теста.',
+    correct:'Верно!',wrong:'Ответ неверный.',finished:'Тест завершён',score:'Правильных ответов: {right} из {total} ({pct}%).',saved:'Результат сохранён только на этом устройстве.',notSaved:'Тренировка не сохраняется в статистику.',saveError:'Не удалось сохранить результат в браузере.',
+    preAfter:'Сохрани код и теперь изучи модели и свойства. В итоговом тесте будут другие вещества.',postAfter:'Сравни этот результат со входным тестом по тому же коду на вкладке «Результаты».',practiceAfter:'Повтори задания, в которых ошибся, и попробуй тест.',
+    again:'К выбору режима',results:'Показать результаты',review:'Пояснения к ошибкам',correctAnswer:'Верный ответ:',
+    resultsHeading:'Результаты Crystal Lab',export:'Экспорт Crystal CSV',clear:'Очистить Crystal',resultsHelp:'Это отдельная диагностика по кристаллическим решёткам: 6 баллов максимум. Данные не смешиваются с VSEPR. Для анализа сопоставляются последние входной и итоговый тесты по одинаковому коду.',
+    noData:'Пока нет завершённых тестов Crystal Lab.',preCount:'Входных тестов',postCount:'Итоговых тестов',pairCount:'Пар тестов',avgGain:'Среднее изменение: {value} процентных пункта (для {count} полных пар).',noPairs:'Пока нет полных пар входного и итогового тестов.',
+    code:'Код',pre:'До (из 6)',post:'После (из 6)',delta:'Разница',exportNone:'Пока нечего выгружать.',confirmDelete:'Удалить только результаты Crystal Lab? Результаты VSEPR не затрагиваются.',
+    reportScope:'Для конкурса: сравнивай только реальные парные результаты. Одно занятие не доказывает, что весь прирост вызван только платформой.'
+  },
+  kk: {
+    nav:'Кристалдық торлар',homeTag:'ЖАҢА МОДУЛЬ · 10-СЫНЫП',homeTitle:'Crystal Lab: құрылымнан қасиетке',
+    homeDesc:'Иондық, атомдық, молекулалық және металдық торларды 3D үлгісінде зертте. Болжам жаса, тексер және екі тестіңді салыстыр.',homeOpen:'Crystal Lab модулін ашу →',
+    eyebrow:'02-МОДУЛЬ · ХИМИЯЛЫҚ БАЙЛАНЫС',title:'Кристалдық торлар',subtitle:'10.1.4.11 · Кристалдық тор типі мен химиялық байланысқа сүйеніп, заттардың қасиеттерін болжа.',
+    explore:'3D модельді зерттеу',predict:'Қасиеттерді болжау',test:'Диагностика 6 + 6',
+    concept1h:'Иондық тор',concept1:'Тор түйіндерінде оң және теріс иондар орналасады. Оларды электростатикалық тартылыс ұстап тұрады.',
+    concept2h:'Атомдық (коваленттік) тор',concept2:'Атомдар коваленттік байланыстар арқылы тұтас кеңістіктік тор түзеді. Мысалы, алмаз.',
+    concept3h:'Молекулалық тор',concept3:'Тор түйіндерінде молекулалар орналасады. Олардың арасында молекулааралық күштер әсер етеді, ал молекула ішінде коваленттік байланыстар болуы мүмкін.',
+    concept4h:'Металдық тор',concept4:'Металл атомдарының оң зарядталған остовтары делокальданған жылжымалы электрондары бар металдық байланыспен ұсталып тұрады.',
+    viewerTitle:'Кристалдың кеңістіктік моделі',viewOverlay:'Шартты модель · масштаб сақталмаған',dragHint:'Айналдыру үшін сүйре • масштаб үшін тінтуір дөңгелегі',reset:'Көріністі қалпына келтіру ↺',
+    observe:'БАҚЫЛА → ТҮСІНДІР',structTitle:'Тор түйіндерінде не орналасады?',bondTitle:'Құрылымды қандай байланыс ұстайды?',propertiesTitle:'Қандай қасиеттер күтіледі?',reasonTitle:'Неге?',goPredict:'Қасиеттерді болжауға өту →',
+    caveat:'Бұл оқу моделі: бөлшектердің өлшемдері, арақашықтықтары және тор түйіндерінің саны шартты. NaCl моделіндегі сызықтар көршілестікті ғана білдіреді, коваленттік байланыстар емес; металдағы электрондар шартты бейнеленген.',
+    sampleNaCl:'NaCl · иондық',sampleDiamond:'C · алмаз',sampleIodine:'I₂ · молекулалық',sampleCopper:'Cu · металдық',
+    naStruct:'Na⁺ катиондары мен Cl⁻ аниондары кезектесіп, үшөлшемді құрылым түзеді.',naBond:'Иондық байланыс: қарама-қарсы зарядталған иондардың тартылысы.',naProperties:'Морт кристалл; балқу температурасы салыстырмалы түрде жоғары. Қатты күйде ток өткізбейді, балқымасы мен ерітіндісі өткізеді.',naReason:'Иондар бір-біріне берік тартылады, бірақ қатты кристалда түйіндерде бекітілген. Балқыма мен ерітіндіде қозғала алады.',naException:'NaCl жеке молекулалардан тұрмайды: бұл Na:Cl = 1:1 қатынасты иондық кристалл.',
+    diamondStruct:'Әрбір көміртек атомы көрші төрт көміртек атомымен үшөлшемді тетраэдрлік тор түзеді.',diamondBond:'Тұтас кристалл бойында берік бағытталған C–C коваленттік байланыстары бар.',diamondProperties:'Өте қатты, электр тогын өткізбейді, қыздыруға өте төзімді құрылым.',diamondReason:'Құрылымды бұзу үшін көптеген берік коваленттік байланыстарды үзу керек.',diamondException:'Қалыпты қысымда қатты қыздырылған алмаз жай ғана «балқымайды»: графиттену және сублимация құбылыстары болуы мүмкін. Сондықтан сапалық салыстыру жасаймыз.',
+    iodineStruct:'Молекулалық кристаллдың тор түйіндерінде жеке I₂ молекулалары орналасады.',iodineBond:'I₂ молекуласының ішінде коваленттік байланыс, ал молекулалар арасында дисперсиялық күштер бар.',iodineProperties:'Балқу температурасы салыстырмалы түрде төмен (шамамен 114 °C), сублимациялана алады; қатты иод ток өткізбейді.',iodineReason:'Балқу кезінде молекулалар арасындағы әрекеттесу әлсірейді, ал әр молекуладағы I–I байланысы үзілмейді.',iodineException:'«Молекулалық тор» молекула ішінде коваленттік байланыс жоқ дегенді білдірмейді.',
+    copperStruct:'Мыс атомдарының остовтары реттелген металдық тор түзеді (жақтары центрленген кубтық тор).',copperBond:'Ортақ делокальданған электрондары бар металдық байланыс.',copperProperties:'Қатты күйде электр тогын жақсы өткізеді, иілімді, металдық жылтыры бар.',copperReason:'Электрондар кристалл бойымен қозғала алады, ал атом остовтарының қабаттары байланыс толық үзілмей ығыса алады.',copperException:'Модельдегі «электрондар теңізі» шартты түрде көрсетілген: жеке электрондар белгілі атомдардың арасына бекітілмейді.',
+    sodium:'Na⁺',chloride:'Cl⁻',carbon:'C',iodine:'I',copper:'Cu',electron:'электрондар',bondMark:'байланыс',
+    predictEyebrow:'2-ҚАДАМ · БОЛЖА → ЗЕРТТЕ → ДӘЛЕЛДЕ',predictTitle:'Заттың қасиеттерін болжа',predictIntro:'Үлгіні таңдап, тексеруден бұрын үш жолды толтыр. Кейін болжамыңды модель және түсіндірмемен салыстыр.',
+    typeLabel:'Кристалдық тор типі',conductLabel:'Қатты күйінде электр тогын өткізе ме?',meltLabel:'Тордың салыстырмалы термиялық тұрақтылығы',choose:'— Жауапты таңда —',
+    typeIonic:'Иондық',typeAtomic:'Атомдық',typeMolecular:'Молекулалық',typeMetal:'Металдық',yes:'Иә',no:'Жоқ',high:'Жоғары',low:'Төмен',
+    predictCheck:'Болжамды тексеру',predictNext:'Келесі зат →',predictNote:'Тек осы төрт мысалға арналған мектептік болжам. Бұл әмбебап заң емес: ерігіштік, электрөткізгіштік және фазалық ауысулар әр затқа және жағдайға байланысты.',
+    chooseAll:'Үш қасиетті де таңда.',predictGreat:'Үш болжам да күтілетін қасиеттерге сәйкес келеді.',predictPartial:'Дұрыс болжамдар: {correct} / 3.',predictExplain:'Түсіндірме: {explanation}',
+    tTitle:'Бастапқы және қорытынды диагностика',tIntro:'Бірдей дағдыларды тексеретін екі түрлі 6 тапсырмалық тест. Тест аяқталғанға дейін нұсқау мен жауап берілмейді. Жаттығуда әр жауаптан кейін түсіндірме беріледі.',
+    codeLabel:'Оқушының жасырын коды',genCode:'Код құрастыру',codeHint:'Бастапқы және қорытынды тестте бірдей кодты қолдан. Аты-жөніңді, телефон нөміріңді және басқа жеке деректеріңді енгізбе.',
+    preTitle:'Бастапқы тест',preDesc:'Crystal Lab-ты оқуға дейінгі 6 тапсырма',pracTitle:'Жаттығу',pracDesc:'Әр жауаптан кейін түсіндірілетін 6 тапсырма',postTitle:'Қорытынды тест',postDesc:'Сол дағдыларды тексеретін басқа 6 тапсырма',startBtn:'Бастау →',
+    modePre:'Бастапқы тест',modePost:'Қорытынды тест',modePractice:'Жаттығу',qLabel:'ТАПСЫРМА · 10-СЫНЫП',questionNum:'{n}-сұрақ / {total}',check:'Тексеру',next:'Келесі сұрақ →',finish:'Аяқтау →',cancel:'Сақтамай тоқтату',
+    answerRequired:'Бір жауап нұсқасын таңда.',codeInvalid:'Латын әріптері, сандар немесе дефиспен жазылған 4–12 таңбалы код енгіз.',sureCancel:'Тестті тоқтатасың ба? Сақталмаған жауаптар өшіріледі.',answerAccepted:'Жауап қабылданды. Түсіндірме тест аяқталған соң ашылады.',
+    correct:'Дұрыс!',wrong:'Қате жауап.',finished:'Тест аяқталды',score:'Дұрыс жауаптар: {right} / {total} ({pct}%).',saved:'Нәтиже тек осы құрылғыда сақталды.',notSaved:'Жаттығу нәтижесі статистикаға сақталмайды.',saveError:'Браузерге нәтижені сақтау мүмкін болмады.',
+    preAfter:'Кодты сақтап, енді модельдерді және заттардың қасиеттерін оқы. Қорытынды тестте басқа заттар беріледі.',postAfter:'«Нәтижелер» бөлімінде осы код бойынша бастапқы және қорытынды тестті салыстыр.',practiceAfter:'Қателескен сұрақтарыңды қайталап, тесттен өтіп көр.',
+    again:'Режим таңдауға оралу',results:'Нәтижелерді көру',review:'Қателердің түсіндірмесі',correctAnswer:'Дұрыс жауап:',
+    resultsHeading:'Crystal Lab нәтижелері',export:'Crystal CSV жүктеу',clear:'Crystal нәтижелерін өшіру',resultsHelp:'Бұл — кристалдық торларға арналған жеке диагностика: ең көп 6 балл. VSEPR нәтижелерімен араласпайды. Бір кодпен өткен соңғы бастапқы және қорытынды тесттер салыстырылады.',
+    noData:'Crystal Lab бойынша әлі аяқталған тест жоқ.',preCount:'Бастапқы тесттер',postCount:'Қорытынды тесттер',pairCount:'Тест жұптары',avgGain:'Орташа өзгеріс: {value} пайыздық пункт ({count} толық жұп бойынша).',noPairs:'Бастапқы және қорытынды тесттердің толық жұптары әзірге жоқ.',
+    code:'Код',pre:'Дейін (6-дан)',post:'Кейін (6-дан)',delta:'Айырма',exportNone:'Жүктейтін нәтиже жоқ.',confirmDelete:'Тек Crystal Lab нәтижелерін өшіру керек пе? VSEPR нәтижелері сақталады.',
+    reportScope:'Байқау үшін тек нақты жұптық нәтижелерді салыстыр. Бір сабақтағы өсім тек платформаның әсерінен болғанын дәлелдемейді.'
+  }
+};
+const crTxt=(k,vars={}) => (CR[currentLanguage]||CR.ru)[k].replace(/\{(\w+)\}/g,(_,k)=>String(vars[k]??''));
+const CR_SAMPLES = [
+ {id:'nacl',tag:'sampleNaCl',formula:'NaCl',type:'ionic',conduct:'no',stability:'high',fields:['naStruct','naBond','naProperties','naReason','naException'],legend:[['#79d69d','sodium'],['#b6a6f7','chloride']]},
+ {id:'diamond',tag:'sampleDiamond',formula:'C (алмаз)',type:'atomic',conduct:'no',stability:'high',fields:['diamondStruct','diamondBond','diamondProperties','diamondReason','diamondException'],legend:[['#dfeaf7','carbon'],['#7c9bb9','bondMark']]},
+ {id:'iodine',tag:'sampleIodine',formula:'I₂',type:'molecular',conduct:'no',stability:'low',fields:['iodineStruct','iodineBond','iodineProperties','iodineReason','iodineException'],legend:[['#b99aef','iodine'],['#7c9bb9','bondMark']]},
+ {id:'copper',tag:'sampleCopper',formula:'Cu',type:'metallic',conduct:'yes',stability:'high',fields:['copperStruct','copperBond','copperProperties','copperReason','copperException'],legend:[['#e8a37b','copper'],['#7fe7f0','electron']]}
+];
+const CR_TYPES=['ionic','atomic','molecular','metallic'];
+const crPropLabel={ionic:'typeIonic',atomic:'typeAtomic',molecular:'typeMolecular',metallic:'typeMetal',yes:'yes',no:'no',high:'high',low:'low'};
+const crTypeName=key=>crTxt(crPropLabel[key]);
+// Six distinct, parallel learning objectives in both pre and post assessment.
+const CR_TESTS={
+ pre:[
+  {id:'p1',k:'type',q:['Какой тип кристаллической решётки у твёрдого NaCl?','Қатты NaCl затының кристалдық торы қандай?'],o:[['Ионная','Иондық'],['Атомная','Атомдық'],['Молекулярная','Молекулалық'],['Металлическая','Металдық']],a:0,why:['NaCl состоит из катионов Na⁺ и анионов Cl⁻ в узлах решётки.','NaCl торының түйіндерінде Na⁺ катиондары мен Cl⁻ аниондары орналасады.']},
+  {id:'p2',k:'metal',q:['Почему твёрдая медь хорошо проводит электрический ток?','Қатты мыс неге электр тогын жақсы өткізеді?'],o:[['Потому что ионы Cu свободно перемещаются в кристалле','Өйткені Cu иондары кристалда еркін қозғалады'],['Благодаря подвижным делокализованным электронам','Жылжымалы делокальданған электрондардың арқасында'],['Из-за перемещения молекул меди','Мыс молекулаларының қозғалуынан'],['Потому что все электроны связаны в пары','Өйткені барлық электрондар жұп түзген']],a:1,why:['В металлах заряд переносят подвижные электроны; атомные остовы остаются на узлах решётки.','Металдарда зарядты жылжымалы электрондар тасымалдайды, ал атом остовтары тор түйіндерінде қалады.']},
+  {id:'p3',k:'hard',q:['Чем объясняется высокая твёрдость алмаза?','Алмаздың өте қатты болуын немен түсіндіреміз?'],o:[['Слабыми силами между молекулами','Молекулалар арасындағы әлсіз күштермен'],['Свободным перемещением ионов','Иондардың еркін қозғалуымен'],['Прочной пространственной сетью ковалентных связей','Коваленттік байланыстардың берік кеңістіктік торымен'],['Наличием отдельных молекул C₄','Жеке C₄ молекулаларының болуымен']],a:2,why:['В алмазе каждый атом C связан с четырьмя соседями, образуя прочную атомную сеть.','Алмазда әр C атомы төрт көршісімен байланысып, берік атомдық тор түзеді.']},
+  {id:'p4',k:'mol',q:['В узлах твёрдого иода I₂ находятся молекулы. Каков тип решётки?','Қатты I₂ иодының тор түйіндерінде молекулалар бар. Тор типі қандай?'],o:[['Атомная','Атомдық'],['Металлическая','Металдық'],['Ионная','Иондық'],['Молекулярная','Молекулалық']],a:3,why:['Между молекулами I₂ действуют межмолекулярные силы.','I₂ молекулаларының арасында молекулааралық күштер әсер етеді.']},
+  {id:'p5',k:'solid',q:['Проводит ли сухой твёрдый NaCl электрический ток при обычных условиях?','Қалыпты жағдайда құрғақ қатты NaCl электр тогын өткізе ме?'],o:[['Да, потому что Na⁺ свободно перемещаются','Иә, себебі Na⁺ еркін қозғалады'],['Нет, ионы закреплены в узлах решётки','Жоқ, иондар тор түйіндерінде бекітілген'],['Да, за счёт делокализованных электронов','Иә, делокальданған электрондар арқылы'],['Да, за счёт свободных молекул NaCl','Иә, еркін NaCl молекулалары арқылы']],a:1,why:['В твёрдом NaCl ионы не могут свободно мигрировать; расплав и раствор проводят ток.','Қатты NaCl-та иондар еркін орын ауыстырмайды; балқыма мен ерітінді ток өткізеді.']},
+  {id:'p6',k:'network',q:['Какой тип решётки характерен для кварца SiO₂?','Кварц SiO₂ үшін қандай кристалдық тор тән?'],o:[['Молекулярная','Молекулалық'],['Ионная','Иондық'],['Атомная (ковалентная сеть)','Атомдық (коваленттік тор)'],['Металлическая','Металдық']],a:2,why:['В кварце атомы Si и O объединены в протяжённую ковалентную сеть; отдельных молекул SiO₂ нет.','Кварцта Si және O атомдары тұтас коваленттік тор түзеді, жеке SiO₂ молекулалары болмайды.']}
+ ],
+ post:[
+  {id:'s1',k:'type',q:['К какому типу относится решётка твёрдого KCl?','Қатты KCl затының кристалдық торы қай типке жатады?'],o:[['Атомная','Атомдық'],['Ионная','Иондық'],['Металлическая','Металдық'],['Молекулярная','Молекулалық']],a:1,why:['В KCl чередуются катионы K⁺ и анионы Cl⁻.','KCl құрылымында K⁺ катиондары мен Cl⁻ аниондары кезектесіп орналасады.']},
+  {id:'s2',k:'metal',q:['За счёт чего алюминий Al проводит ток в твёрдом состоянии?','Алюминий Al қатты күйінде токты ненің есебінен өткізеді?'],o:[['Благодаря свободным атомам кислорода','Оттектің еркін атомдары арқылы'],['Благодаря перемещению молекул Al₂','Al₂ молекулаларының орын ауыстыруы арқылы'],['Благодаря подвижным делокализованным электронам','Жылжымалы делокальданған электрондардың арқасында'],['Из-за переноса заряда неподвижными ядрами','Қозғалмайтын ядролар заряд тасымалдағандықтан']],a:2,why:['В металлическом алюминии заряд переносят делокализованные электроны.','Металдық алюминийде зарядты делокальданған электрондар тасымалдайды.']},
+  {id:'s3',k:'hard',q:['Почему карбид кремния SiC очень твёрдый?','Кремний карбиді SiC неліктен өте қатты?'],o:[['Он состоит из слабосвязанных молекул SiC','Ол әлсіз байланысқан SiC молекулаларынан тұрады'],['В нём свободно перемещаются ионы','Онда иондар еркін қозғалады'],['В нём нет химических связей','Онда химиялық байланыс жоқ'],['Атомы образуют прочную ковалентную сеть','Атомдар берік коваленттік тор түзеді']],a:3,why:['В SiC атомы соединены прочными ковалентными связями в протяжённую структуру.','SiC құрамында атомдар берік коваленттік байланыстармен тұтас тор түзеді.']},
+  {id:'s4',k:'mol',q:['Твёрдая сера S₈ состоит из отдельных молекул S₈. Какой тип решётки у неё?','Қатты күкірт S₈ жеке S₈ молекулаларынан тұрады. Оның тор типі қандай?'],o:[['Молекулярная','Молекулалық'],['Ионная','Иондық'],['Металлическая','Металдық'],['Атомная','Атомдық']],a:0,why:['Между молекулами S₈ действуют межмолекулярные силы.','S₈ молекулаларының арасында молекулааралық күштер әсер етеді.']},
+  {id:'s5',k:'solid',q:['Проводит ли сухой твёрдый KCl электрический ток при обычных условиях?','Қалыпты жағдайда құрғақ қатты KCl электр тогын өткізе ме?'],o:[['Да, в нём движутся молекулы KCl','Иә, онда KCl молекулалары қозғалады'],['Да, благодаря свободным электронам','Иә, еркін электрондардың арқасында'],['Нет, ионы закреплены в узлах кристалла','Жоқ, иондар кристалл түйіндерінде бекітілген'],['Да, потому что твёрдое тело всегда проводит ток','Иә, өйткені барлық қатты зат ток өткізеді']],a:2,why:['Твёрдая ионная решётка ограничивает движение ионов. В расплаве или растворе перенос заряда возможен.','Қатты иондық тор иондардың қозғалысын шектейді. Балқымада немесе ерітіндіде заряд тасымалданады.']},
+  {id:'s6',k:'network',q:['К какому типу относится кристаллическая структура кремния Si?','Кремний Si кристалының торы қай типке жатады?'],o:[['Молекулярная','Молекулалық'],['Атомная (ковалентная сеть)','Атомдық (коваленттік тор)'],['Ионная','Иондық'],['Металлическая','Металдық']],a:1,why:['Атомы кремния соединены ковалентными связями в трёхмерную сеть. Это полупроводник, а не типичный металл.','Кремний атомдары үшөлшемді коваленттік тор түзеді. Ол кәдімгі металл емес, жартылай өткізгіш.']}
+ ],
+ practice:[
+  {id:'r1',k:'liquid',q:['Что произойдёт с проводимостью NaCl при переходе из твёрдого состояния в расплав?','Қатты NaCl балқыған кезде электрөткізгіштігі қалай өзгереді?'],o:[['Увеличится: ионы смогут двигаться','Артады: иондар қозғала алады'],['Исчезнет из-за разрушения электронов','Электрондар жойылғандықтан жоғалады'],['Не изменится: ионы неподвижны и в расплаве','Өзгермейді: балқымада да иондар қозғалмайды'],['Появятся молекулы меди','Мыс молекулалары пайда болады']],a:0,why:['В расплаве ионы становятся подвижными и могут переносить заряд.','Балқымада иондар жылжымалы болып, заряд тасымалдай алады.']},
+  {id:'r2',k:'mol',q:['В сухом льде CO₂ молекулы упакованы в кристалл. Каков тип решётки?','Құрғақ мұз CO₂ құрамында молекулалар кристалл түзеді. Тор типі қандай?'],o:[['Ионная','Иондық'],['Металлическая','Металдық'],['Молекулярная','Молекулалық'],['Атомная','Атомдық']],a:2,why:['Ковалентные связи внутри CO₂ не делают твёрдый CO₂ атомным кристаллом.','CO₂ молекуласындағы коваленттік байланыстар қатты CO₂-ні атомдық торға айналдырмайды.']},
+  {id:'r3',k:'metal',q:['Какая структура в целом характерна для твёрдого алюминия?','Қатты алюминийге қандай құрылым тән?'],o:[['Металлическая решётка','Металдық тор'],['Молекулярная решётка','Молекулалық тор'],['Ионная решётка','Иондық тор'],['Кристалл отдельных молекул Al₂','Жеке Al₂ молекулаларының кристалы']],a:0,why:['Алюминий — металл с металлической связью и делокализованными электронами.','Алюминий — металдық байланысы және делокальданған электрондары бар металл.']},
+  {id:'r4',k:'hard',q:['Чем отличается алмаз от молекулярного иода по устойчивости структуры?','Алмаз құрылымының тұрақтылығы молекулалық иодтан қалай ерекшеленеді?'],o:[['У алмаза есть лишь слабые межмолекулярные силы','Алмазда тек әлсіз молекулааралық күштер бар'],['Сеть алмаза удерживают прочные ковалентные связи','Алмаз торын берік коваленттік байланыстар ұстайды'],['Алмаз состоит из свободно движущихся ионов','Алмаз еркін қозғалатын иондардан тұрады'],['Иод образует металлическую решётку','Иод металдық тор түзеді']],a:1,why:['Алмаз — атомный кристалл; в иоде при нагревании преодолеваются преимущественно межмолекулярные силы.','Алмаз — атомдық кристалл; иод қыздырылғанда негізінен молекулааралық күштер әлсірейді.']},
+  {id:'r5',k:'ionic',q:['Какие частицы находятся в узлах кристалла KBr?','KBr кристалының тор түйіндерінде қандай бөлшектер орналасады?'],o:[['Молекулы KBr','KBr молекулалары'],['Только атомы K','Тек K атомдары'],['Ионы K⁺ и Br⁻','K⁺ және Br⁻ иондары'],['Молекулы Br₂','Br₂ молекулалары']],a:2,why:['KBr — ионное соединение, решётка содержит противоположно заряженные ионы.','KBr — иондық қосылыс, торда қарама-қарсы зарядталған иондар бар.']},
+  {id:'r6',k:'exception',q:['Графит и алмаз состоят из углерода. Почему их свойства различаются?','Графит пен алмаз көміртектен тұрады. Неліктен қасиеттері әртүрлі?'],o:[['У графита и алмаза одинаковое расположение атомов','Графит пен алмазда атомдар бірдей орналасқан'],['Алмаз состоит из молекул C₂, графит из C₄','Алмаз C₂, графит C₄ молекулаларынан тұрады'],['Разница только в цвете','Айырмашылығы тек түсінде'],['Отличаются структура и характер связей внутри кристалла','Кристалдағы құрылымы мен байланыс ерекшелігі әртүрлі']],a:3,why:['У алмаза трёхмерная ковалентная сеть, у графита — слоистая; это влияет на твёрдость и проводимость.','Алмазда үшөлшемді, графитте қабатты коваленттік құрылым бар; бұл қаттылық пен электрөткізгіштікке әсер етеді.']}
+ ]
+};
+let crTab='explore',crSample='nacl',crPredictSample='nacl',crSession=null,crFeedbackShown=false;
+const CR_KEY='chemmind_crystal_v1_results';
+const crById=id=>document.getElementById(id);
+const crSamp=id=>CR_SAMPLES.find(s=>s.id===id)||CR_SAMPLES[0];
+function crRead(){try{const r=JSON.parse(localStorage.getItem(CR_KEY)||'[]');return Array.isArray(r)?r:[]}catch{return []}}
+function crWrite(r){try{localStorage.setItem(CR_KEY,JSON.stringify(r));return true}catch{return false}}
+function crSwitch(tab){if(tab==='test'){openQuizTopic('crystal');return;}crTab=tab;['explore','predict'].forEach(name=>{crById('cr'+name[0].toUpperCase()+name.slice(1)).classList.toggle('hidden',name!==tab);const button=document.querySelector('[data-crtab="'+name+'"]');button.classList.toggle('secondary',name!==tab)});document.querySelector('[data-crtab="test"]').classList.add('secondary');if(tab==='explore'){crRebuild();requestAnimationFrame(crDraw)} if(tab==='predict')crRenderPrediction();}
+function crOpen(tab='explore'){go('crystal');crSwitch(tab)}
+function crFillStatic(){const fields={
+  crNav:'nav',crHomeTag:'homeTag',crHomeTitle:'homeTitle',crHomeDesc:'homeDesc',crHomeOpen:'homeOpen',crEyebrow:'eyebrow',crTitle:'title',crSubtitle:'subtitle',crTabExplore:'explore',crTabPredict:'predict',crTabTest:'test',
+  crViewerTitle:'viewerTitle',crViewOverlay:'viewOverlay',crDragHint:'dragHint',crReset:'reset',crObserve:'observe',crBondHeading:'bondTitle',crPropertiesHeading:'propertiesTitle',crReasonHeading:'reasonTitle',crGoPredict:'goPredict',crModelCaveat:'caveat',
+  crPredictEyebrow:'predictEyebrow',crPredictTitle:'predictTitle',crPredictIntro:'predictIntro',crTypeLabel:'typeLabel',crConductLabel:'conductLabel',crMeltLabel:'meltLabel',crCheckPrediction:'predictCheck',crNextSample:'predictNext',crPredictNote:'predictNote',
+  crTestTitle:'tTitle',crTestIntro:'tIntro',crCodeLabel:'codeLabel',crGenCode:'genCode',crCodeHint:'codeHint',crPreTitle:'preTitle',crPreDesc:'preDesc',crPracticeTitle:'pracTitle',crPracticeDesc:'pracDesc',crPostTitle:'postTitle',crPostDesc:'postDesc',
+  crStartPre:'startBtn',crStartPractice:'startBtn',crStartPost:'startBtn',crQuestionLabel:'qLabel',crAnswerCheck:'check',crCancelTest:'cancel',crResultsHeading:'resultsHeading',crExportResults:'export',crClearResults:'clear',crResultsHelp:'resultsHelp'
+ };Object.entries(fields).forEach(([id,key])=>{crById(id).textContent=crTxt(key)});
+ crById('crConcepts').innerHTML=[1,2,3,4].map(i=>`<div class="concept"><h3>${crTxt('concept'+i+'h')}</h3><p>${crTxt('concept'+i)}</p></div>`).join('');
+ crRenderSampleButtons();crRenderDetails();crRenderPrediction();crRenderTest();crRenderResults();
+}
+function crRenderSampleButtons(){for(const [id,chosen] of [['crSampleButtons',crSample],['crPredictSampleButtons',crPredictSample]]){crById(id).innerHTML=CR_SAMPLES.map(s=>`<button type="button" data-crsample="${s.id}" data-crgroup="${id}" aria-pressed="${chosen===s.id}">${crTxt(s.tag)}</button>`).join('')}}
+function crRenderDetails(){const s=crSamp(crSample);crById('crViewerFormula').textContent=s.formula;crById('crStructTitle').textContent=crTxt('structTitle');['crStructure','crBond','crProperties','crReason','crException'].forEach((id,i)=>crById(id).textContent=crTxt(s.fields[i]));crById('crLegend').innerHTML=s.legend.map(([color,key])=>`<span><i class="cr-swatch" style="background:${color}"></i>${crTxt(key)}</span>`).join('')}
+function crFillSelect(id,options){const sel=crById(id),value=sel.value;sel.innerHTML=`<option value="">${crTxt('choose')}</option>`+options.map(x=>`<option value="${x}">${crTypeName(x)}</option>`).join('');sel.value=options.includes(value)?value:''}
+function crRenderPrediction(){crRenderSampleButtons();crFillSelect('crTypeSelect',CR_TYPES);crFillSelect('crConductSelect',['yes','no']);crFillSelect('crMeltSelect',['high','low']);}
+function crCheckPredict(){let s=crSamp(crPredictSample),fields=['crTypeSelect','crConductSelect','crMeltSelect'];let vals=fields.map(x=>crById(x).value);if(vals.some(v=>!v)){alert(crTxt('chooseAll'));return}let right=[s.type,s.conduct,s.stability];let n=right.filter((v,i)=>v===vals[i]).length;let html=`<div class="feedback ${n===3?'':'error'}"><strong>${n===3?crTxt('predictGreat'):crTxt('predictPartial',{correct:n})}</strong><p>${crTxt('typeLabel')}: ${crTypeName(s.type)} · ${crTxt('conductLabel')} ${crTypeName(s.conduct)} · ${crTxt('meltLabel')}: ${crTypeName(s.stability)}</p><p>${crTxt('predictExplain',{explanation:crTxt(s.fields[3])})}</p></div>`;crById('crPredictionFeedback').innerHTML=html}
+// Offline 3D rasterization: mouse/touch drag to rotate and wheel to zoom.
+let crRotation={x:-.42,y:.60},crZoom=1,crDragging=false,crLast=null,crNodes=[],crEdges=[];
+function crAddAtom(x,y,z,color,label,r=11){crNodes.push({x,y,z,color,label,r})}
+function crAddEdge(i,j,kind='bond'){crEdges.push({i,j,kind})}
+function crRebuild(){crNodes=[];crEdges=[];const id=crSample;
+ if(id==='nacl'){
+   const lookup={};for(let x=0;x<4;x++)for(let y=0;y<4;y++)for(let z=0;z<3;z++){const even=(x+y+z)%2===0;const key=[x,y,z].join(',');lookup[key]=crNodes.length;crAddAtom((x-1.5)*1.0,(y-1.5)*1.0,(z-1)*1.0,even?'#79d69d':'#b6a6f7',even?'Na⁺':'Cl⁻',even?9:13)}
+   for(let x=0;x<4;x++)for(let y=0;y<4;y++)for(let z=0;z<3;z++){const i=lookup[[x,y,z].join(',')];for(const [a,b,c] of [[1,0,0],[0,1,0],[0,0,1]]){const j=lookup[[x+a,y+b,z+c].join(',')];if(j!==undefined)crAddEdge(i,j,'guide')}}
+ } else if(id==='diamond'){
+   const basis=[[0,0,0],[0,.5,.5],[.5,0,.5],[.5,.5,0],[.25,.25,.25],[.25,.75,.75],[.75,.25,.75],[.75,.75,.25]];
+   for(let x=0;x<2;x++)for(let y=0;y<2;y++)for(let z=0;z<2;z++)for(const b of basis){crAddAtom((x+b[0]-.88)*2.05,(y+b[1]-.88)*2.05,(z+b[2]-.88)*2.05,'#e7f1ff','C',7.8)}
+   for(let i=0;i<crNodes.length;i++)for(let j=i+1;j<crNodes.length;j++){const a=crNodes[i],b=crNodes[j],d=Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z);if(d>.84&&d<.91)crAddEdge(i,j)}
+ } else if(id==='iodine'){
+   for(let x=-1;x<=1;x++)for(let y=-1;y<=1;y++)for(let z=-.5;z<=.5;z++){let a=crNodes.length;crAddAtom(x*1.28-.25,y*1.26,z*1.65,'#b99aef','I',14);crAddAtom(x*1.28+.25,y*1.26,z*1.65,'#b99aef','I',14);crAddEdge(a,a+1)}
+ } else {
+   const lookup=new Set();const add=(x,y,z)=>{const key=[x,y,z].join(':');if(!lookup.has(key)){lookup.add(key);crAddAtom((x-1)*1.2,(y-1)*1.2,(z-1)*1.2,'#e8a37b','Cu',10)}};
+   for(let x=0;x<=2;x++)for(let y=0;y<=2;y++)for(let z=0;z<=2;z++)add(x,y,z);
+   for(let x=0;x<2;x++)for(let y=0;y<2;y++)for(let z=0;z<=2;z++)add(x+.5,y+.5,z);
+   for(let x=0;x<2;x++)for(let z=0;z<2;z++)for(let y=0;y<=2;y++)add(x+.5,y,z+.5);
+   for(let y=0;y<2;y++)for(let z=0;z<2;z++)for(let x=0;x<=2;x++)add(x,y+.5,z+.5);
+ }
+}
+function crDraw(){const canvas=crById('crCanvas');if(!canvas||crById('crystal').classList.contains('hidden')||crTab!=='explore')return;
+ const rect=canvas.getBoundingClientRect();if(!rect.width||!rect.height)return;const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);const ctx=canvas.getContext('2d');if(!ctx)return;ctx.scale(dpr,dpr);ctx.clearRect(0,0,rect.width,rect.height);
+ const cY=Math.cos(crRotation.y),sY=Math.sin(crRotation.y),cX=Math.cos(crRotation.x),sX=Math.sin(crRotation.x);
+ function project(p){let x=p.x*cY-p.z*sY,z=p.x*sY+p.z*cY,y=p.y*cX-z*sX;z=p.y*sX+z*cX;const scale=Math.min(rect.width/8,rect.height/7)*crZoom*1.4;const perspective=5.5/(5.5+z*.16);return {x:rect.width*.5+x*scale*perspective,y:rect.height*.50-y*scale*perspective,z:z,r:p.r*crZoom*perspective*.88}}
+ const points=crNodes.map(project);
+ const edges=crEdges.map(e=>({a:points[e.i],b:points[e.j],kind:e.kind,z:(points[e.i].z+points[e.j].z)*.5})).sort((a,b)=>b.z-a.z);
+ for(const e of edges){const gradient=ctx.createLinearGradient(e.a.x,e.a.y,e.b.x,e.b.y);gradient.addColorStop(0,e.kind==='guide'?'#445d7f':'#89a7c8');gradient.addColorStop(1,e.kind==='guide'?'#365875':'#6287ac');ctx.beginPath();ctx.strokeStyle=gradient;ctx.lineWidth=e.kind==='guide'?1.8:5;ctx.globalAlpha=e.kind==='guide'?.42:.72;ctx.moveTo(e.a.x,e.a.y);ctx.lineTo(e.b.x,e.b.y);ctx.stroke();ctx.globalAlpha=1}
+ const sorted=points.map((p,i)=>({...p,original:crNodes[i]})).sort((a,b)=>b.z-a.z);
+ for(const p of sorted){const r=Math.max(3,p.r);const shade=ctx.createRadialGradient(p.x-r*.35,p.y-r*.4,r*.1,p.x,p.y,r);shade.addColorStop(0,'#ffffff');shade.addColorStop(.12,p.original.color);shade.addColorStop(1,'#24334f');ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=shade;ctx.fill();ctx.lineWidth=1.4;ctx.strokeStyle='#b9cbe7aa';ctx.stroke();if((crSample==='nacl'||crSample==='iodine')&&r>=10){ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`700 ${Math.max(7,r*.65)}px system-ui`;ctx.fillText(p.original.label,p.x,p.y)} }
+ if(crSample==='copper'){// conceptual electrons, not fixed atom-to-atom paths
+   ctx.save();for(let i=0;i<24;i++){const theta=(i*2.39996),k=(i%5-2)*.38;let pt=project({x:Math.sin(theta)*1.35,y:Math.cos(theta)*1.15,z:k,r:2});ctx.beginPath();ctx.fillStyle='#84eaf9bb';ctx.arc(pt.x,pt.y,2.9,0,Math.PI*2);ctx.fill()}ctx.restore()}
+}
+function crReset(){crRotation={x:-.42,y:.60};crZoom=1;crDraw()}
+const crCv=crById('crCanvas');
+crCv.addEventListener('pointerdown',e=>{crDragging=true;crLast={x:e.clientX,y:e.clientY};crCv.setPointerCapture(e.pointerId)});
+crCv.addEventListener('pointermove',e=>{if(!crDragging||!crLast)return;crRotation.y+=(e.clientX-crLast.x)*.009;crRotation.x+=(e.clientY-crLast.y)*.009;crRotation.x=Math.max(-1.55,Math.min(1.55,crRotation.x));crLast={x:e.clientX,y:e.clientY};crDraw()});
+['pointerup','pointercancel','lostpointercapture'].forEach(n=>crCv.addEventListener(n,()=>{crDragging=false;crLast=null}));
+crCv.addEventListener('wheel',e=>{e.preventDefault();crZoom=Math.max(.5,Math.min(1.8,crZoom*(e.deltaY>0?.92:1.08)));crDraw()},{passive:false});
+crById('crReset').addEventListener('click',crReset);
+window.addEventListener('resize',()=>{if(!crById('crystal').classList.contains('hidden'))crDraw()});
+const crObs=new MutationObserver(()=>{if(!crById('crystal').classList.contains('hidden'))requestAnimationFrame(crDraw)});crObs.observe(crById('crystal'),{attributes:true,attributeFilter:['class']});
+
+function crRenderTest(){if(!crSession){crById('crTestSetup').classList.remove('hidden');crById('crTesting').classList.add('hidden');return}const s=crSession,q=s.questions[s.idx],kk=currentLanguage==='kk'?1:0;
+ crById('crTestSetup').classList.add('hidden');crById('crTesting').classList.remove('hidden');crById('crTestFinished').classList.add('hidden');crById('crTestMode').textContent=crTxt(s.mode==='pre'?'modePre':s.mode==='post'?'modePost':'modePractice');crById('crTestCounter').textContent=crTxt('questionNum',{n:s.idx+1,total:s.questions.length});crById('crTestProgress').style.width=100*s.idx/s.questions.length+'%';crById('crQuestionText').textContent=q.q[kk];
+ crById('crAnswers').innerHTML=q.o.map((opt,i)=>`<label><input type="radio" name="crAnswer" value="${i}" ${s.selected===i?'checked':''} ${crFeedbackShown?'disabled':''}><span>${opt[kk]}</span></label>`).join('');
+ crById('crAnswerCheck').classList.toggle('hidden',crFeedbackShown);crById('crAnswerNext').classList.toggle('hidden',!crFeedbackShown);crById('crAnswerNext').textContent=crTxt(s.idx===s.questions.length-1?'finish':'next');
+ const fb=crById('crAnswerFeedback');if(!crFeedbackShown){fb.innerHTML=''}else {const last=s.answers[s.idx];fb.innerHTML=s.mode==='practice'?`<div class="feedback ${last.right?'':'error'}"><strong>${crTxt(last.right?'correct':'wrong')}</strong><p>${q.why[kk]}</p><p>${crTxt('correctAnswer')} ${q.o[q.a][kk]}</p></div>`:`<div class="feedback">${crTxt('answerAccepted')}</div>`}}
+function crStart(mode){const code=crById('crCode').value.trim().toUpperCase();if(!/^[A-Z0-9-]{4,12}$/.test(code)){alert(crTxt('codeInvalid'));return}crSession={mode,code,questions:CR_TESTS[mode],idx:0,selected:-1,answers:[],startedAt:new Date().toISOString()};crFeedbackShown=false;crRenderTest()}
+function crCheckAnswer(){if(!crSession||crFeedbackShown)return;const radio=document.querySelector('input[name="crAnswer"]:checked');if(!radio){alert(crTxt('answerRequired'));return}const answer=Number(radio.value),q=crSession.questions[crSession.idx];crSession.selected=answer;crSession.answers.push({id:q.id,choice:answer,right:answer===q.a});crFeedbackShown=true;crRenderTest()}
+function crNextQuestion(){if(!crSession||!crFeedbackShown)return;if(crSession.idx+1>=crSession.questions.length)return crFinishTest();crSession.idx++;crSession.selected=-1;crFeedbackShown=false;crRenderTest()}
+function crFinishTest(){if(!crSession)return;const s=crSession,correct=s.answers.filter(x=>x.right).length,total=s.questions.length;let saved=true;
+ if(s.mode!=='practice'){const rows=crRead();rows.push({code:s.code,mode:s.mode,createdAt:new Date().toISOString(),total,correct,answers:s.answers});saved=crWrite(rows)}
+ crById('crTesting').classList.add('hidden');crById('crTestFinished').classList.remove('hidden');let post=s.mode==='pre'?'preAfter':s.mode==='post'?'postAfter':'practiceAfter';const kk=currentLanguage==='kk'?1:0;
+ const mistakes=s.answers.flatMap((a,i)=>!a.right?[{q:s.questions[i],i}]:[]);
+ const review=s.mode==='pre'?'':mistakes.length?`<h3>${crTxt('review')}</h3><ul class="summary-list">${mistakes.map(x=>`<li>${crTxt('correctAnswer')} ${x.q.o[x.q.a][kk]}. ${x.q.why[kk]}</li>`).join('')}</ul>`:'';
+ crById('crTestFinished').innerHTML=`<span class="eyebrow">CRYSTAL LAB</span><h2>${crTxt('finished')}</h2><p class="lead">${crTxt('score',{right:correct,total,pct:Math.round(100*correct/total)})}</p><p>${s.mode==='practice'?crTxt('notSaved'):saved?crTxt('saved'):crTxt('saveError')}</p><p>${crTxt(post)}</p>${review}<div class="actions"><button class="btn" type="button" id="crDoneBack">${crTxt('again')}</button><button class="btn secondary" type="button" id="crDoneResults">${crTxt('results')}</button></div>`;
+ crById('crDoneBack').addEventListener('click',crResetTest);crById('crDoneResults').addEventListener('click',()=>{crResetTest();go('results')});crSession=null}
+function crResetTest(){crSession=null;crFeedbackShown=false;crById('crTestFinished').classList.add('hidden');crById('crTesting').classList.add('hidden');crById('crTestSetup').classList.remove('hidden')}
+function crRenderResults(){const rows=crRead(),el=crById('crResultsTable');if(!rows.length){el.innerHTML=`<p class="muted">${crTxt('noData')}</p>`;return}
+ const byCode=new Map();for(const row of rows){let value=byCode.get(row.code)||{};if(!value[row.mode]||row.createdAt>=value[row.mode].createdAt)value[row.mode]=row;byCode.set(row.code,value)}
+ const pairs=[...byCode].filter(([code,v])=>v.pre&&v.post).map(([code,v])=>({code,pre:v.pre.correct,post:v.post.correct}));const pre=rows.filter(x=>x.mode==='pre'),post=rows.filter(x=>x.mode==='post');const avg=pairs.length?(100*pairs.reduce((acc,v)=>acc+(v.post-v.pre)/6,0)/pairs.length).toFixed(1):'—';
+ const stats=`<div class="stats"><div class="stat"><span class="n">${pre.length}</span><span class="label">${crTxt('preCount')}</span></div><div class="stat"><span class="n">${post.length}</span><span class="label">${crTxt('postCount')}</span></div><div class="stat"><span class="n">${pairs.length}</span><span class="label">${crTxt('pairCount')}</span></div></div>`;
+ const table=pairs.length?`<p>${crTxt('avgGain',{value:avg,count:pairs.length})}</p><div class="tablewrap"><table><thead><tr><th>${crTxt('code')}</th><th>${crTxt('pre')}</th><th>${crTxt('post')}</th><th>${crTxt('delta')}</th></tr></thead><tbody>${pairs.map(x=>`<tr><td>${escapeHtml(x.code)}</td><td>${x.pre}</td><td>${x.post}</td><td style="color:${x.post>=x.pre?'#9af0ba':'#ffabac'}">${x.post-x.pre>0?'+':''}${x.post-x.pre}</td></tr>`).join('')}</tbody></table></div>`:`<p>${crTxt('noPairs')}</p>`;
+ el.innerHTML=stats+table+`<p class="small muted">${crTxt('reportScope')}</p>`}
+function crExport(){const rows=crRead();if(!rows.length){alert(crTxt('exportNone'));return}const lang=currentLanguage==='kk'?1:0;const header=['code','module','mode','timestamp_ISO','correct','total','question_id','selected_option_index_0based','correct_option_index_0based','is_correct','question','selected_answer','correct_answer'];const data=[header];rows.forEach(r=>{const qs=CR_TESTS[r.mode];r.answers.forEach(a=>{const q=qs.find(z=>z.id===a.id);if(q)data.push([r.code,'crystal',r.mode,r.createdAt,r.correct,r.total,a.id,a.choice,q.a,a.right?1:0,q.q[lang],q.o[a.choice][lang],q.o[q.a][lang]])})});const quote=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const csv='\ufeff'+data.map(r=>r.map(quote).join(';')).join('\r\n');const link=document.createElement('a');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));link.href=url;link.download='chemmind_crystal_anon_'+currentLanguage+'.csv';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function crRefresh(){crFillStatic();if(crSession)crRenderTest();if(!crById('crystal').classList.contains('hidden')&&crTab==='explore')requestAnimationFrame(crDraw)}
+function crSelectSample(id,group){if(group==='crSampleButtons'){crSample=id;crRenderDetails();crRebuild();crDraw()}else{crPredictSample=id;['crTypeSelect','crConductSelect','crMeltSelect'].forEach(x=>crById(x).value='');crById('crPredictionFeedback').innerHTML=''}crRenderSampleButtons()}
+crById('crHomeOpen').addEventListener('click',()=>crOpen('explore'));
+crById('crGoPredict').addEventListener('click',()=>crSwitch('predict'));
+document.querySelectorAll('[data-crtab]').forEach(b=>b.addEventListener('click',()=>crSwitch(b.dataset.crtab)));
+document.querySelectorAll('[data-crmode]').forEach(b=>b.addEventListener('click',()=>crStart(b.dataset.crmode)));
+crById('crystal').addEventListener('click',e=>{const b=e.target.closest('[data-crsample]');if(b)crSelectSample(b.dataset.crsample,b.dataset.crgroup)});
+crById('crCheckPrediction').addEventListener('click',crCheckPredict);
+crById('crNextSample').addEventListener('click',()=>{const idx=CR_SAMPLES.findIndex(x=>x.id===crPredictSample);crSelectSample(CR_SAMPLES[(idx+1)%CR_SAMPLES.length].id,'crPredictSampleButtons')});
+crById('crGenCode').addEventListener('click',()=>{crById('crCode').value=makeCode()});crById('crCode').value=makeCode();
+crById('crAnswerCheck').addEventListener('click',crCheckAnswer);crById('crAnswerNext').addEventListener('click',crNextQuestion);
+crById('crCancelTest').addEventListener('click',()=>{if(confirm(crTxt('sureCancel')))crResetTest()});
+crById('crExportResults').addEventListener('click',crExport);
+crById('crClearResults').addEventListener('click',()=>{if(confirm(crTxt('confirmDelete'))){crWrite([]);crRenderResults()}});
+document.addEventListener('chemmind:lang',crRefresh);
+// The pre-existing VSEPR dashboard and storage remain independent.
+crFillStatic();crRebuild();
+// Wrap existing results renderer so both modules update when the Results tab opens.
+const crPrevResultsRenderer=renderDashboard;
+renderDashboard=function(){crPrevResultsRenderer();crRenderResults()};
+
+</script>
+
+<script>
+// Offline authorship profile; no server requests or external libraries.
+(function(){
+  'use strict';
+  const KEY = 'chemmind_author_profile_v2';
+  const DEFAULT = {name:'Қажымұхан Жанкожа Бақтыбайұлы', school:'«Талапкер ауылының мектеп-гимназиясы» КММ', region:'Ақмола облысы', district:''};
+  const $a = id => document.getElementById(id);
+  let profile = {...DEFAULT};
+  try {
+    const stored=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(stored && typeof stored==='object') for(const k of Object.keys(DEFAULT)){
+      if(typeof stored[k]==='string') profile[k]=stored[k].slice(0,250);
+    }
+  }catch(e){}
+  const labels = {
+    ru:{missing:'Не указано — заполните перед конкурсом', saved:'Сведения сохранены в этом браузере.', exported:'Файл платформы с авторскими данными скачан.', error:'Не удалось сохранить данные в этом браузере.', check:'Перед подачей проверь Ф. И. О. и официальное название школы.'},
+    kk:{missing:'Көрсетілмеген — конкурс алдында толтырыңыз', saved:'Мәліметтер осы браузерде сақталды.', exported:'Автор мәліметтері бар платформа файлы жүктелді.', error:'Осы браузерде сақтау мүмкін болмады.', check:'Өтінім алдында толық аты-жөніңіз бен мектептің ресми атауын тексеріңіз.'}
+  };
+  const current=()=>document.documentElement.lang==='kk'?'kk':'ru';
+  function getFields(){return {
+    name:$a('authorInputName').value.trim().slice(0,150),
+    school:$a('authorInputSchool').value.trim().slice(0,250),
+    region:$a('authorInputRegion').value.trim().slice(0,120),
+    district:$a('authorInputDistrict').value.trim().slice(0,130)
+  }}
+  function fillFields(){for(const k of Object.keys(DEFAULT))$a('authorInput'+k[0].toUpperCase()+k.slice(1)).value=profile[k]||''}
+  function renderProfile(){
+    const dict=labels[current()];
+    const name=profile.name||dict.missing;
+    const school=profile.school||dict.missing;
+    const location=[profile.region,profile.district].filter(Boolean).join(' · ')||dict.missing;
+    $a('homeAuthorName').textContent=name;
+    $a('authorDisplayName').textContent=name;
+    $a('authorDisplaySchool').textContent=school;
+    $a('authorDisplayLocation').textContent=location;
+    $a('footerAuthor').textContent=(current()==='kk'?'ChemMind · Жоба авторы: ':'ChemMind · Автор проекта: ')+name;
+  }
+  function renderLanguage(){
+    const lang=current();
+    document.querySelectorAll('.cm-i18n').forEach(el=>{
+      const text=el.getAttribute('data-'+lang);
+      if(text!==null)el.textContent=text;
+    });
+    renderProfile();
+    const box=$a('authorSaveNotice');if(box)box.textContent='';
+  }
+  function save(){
+    profile=getFields();
+    try{localStorage.setItem(KEY,JSON.stringify(profile));$a('authorSaveNotice').textContent=labels[current()].saved+' '+labels[current()].check}
+    catch(e){$a('authorSaveNotice').textContent=labels[current()].error}
+    renderProfile();
+  }
+  function download(name, text, type){
+    const url=URL.createObjectURL(new Blob([text],{type:type||'text/plain;charset=utf-8'}));
+    const link=document.createElement('a');link.href=url;link.download=name;
+    document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+  function exportHTML(){
+    save();
+    // Keep source HTML free of the local test data. Prefill only author fields.
+    const html=document.documentElement.cloneNode(true);
+    // Export a clean lesson page, not a snapshot of a student's session.
+    for(const section of html.querySelectorAll('main > section.page'))section.classList.toggle('hidden',section.id!=='home');
+    for(const btn of html.querySelectorAll('nav button[data-tab]'))btn.classList.toggle('active',btn.dataset.tab==='home');
+    for(const id of ['dashboard','crResultsTable','crTestResult','authorSaveNotice','builderFeedback']){
+      const el=html.querySelector('#'+id);if(el)el.replaceChildren();
+    }
+    for(const id of ['studentCode','crCode']){
+      const el=html.querySelector('#'+id);if(el){el.value='';el.setAttribute('value','')}
+    }
+    // Normalize translated text so both language buttons still work on re-open.
+    const reversed=new Map(Object.entries(STATIC_KK).map(([ru,kk])=>[kk,ru]));
+    const walker=document.createTreeWalker(html,NodeFilter.SHOW_TEXT);
+    let node;while((node=walker.nextNode())){
+      if(['SCRIPT','STYLE'].includes(node.parentElement?.tagName))continue;
+      const text=node.textContent,trimmed=text.trim();
+      if(reversed.has(trimmed))node.textContent=text.replace(trimmed,reversed.get(trimmed));
+    }
+    for(const el of html.querySelectorAll('.cm-i18n'))if(el.hasAttribute('data-ru'))el.textContent=el.getAttribute('data-ru');
+    html.lang='ru';
+    for(const el of html.querySelectorAll('#cm-author-profile'))el.remove();
+    const form={authorInputName:'name',authorInputSchool:'school',authorInputRegion:'region',authorInputDistrict:'district'};
+    for(const [id,k] of Object.entries(form)){
+      const input=html.querySelector('#'+id);if(input)input.setAttribute('value',profile[k]);
+    }
+    const script=html.querySelector('script[data-author-prefill]');
+    if(script)script.remove();
+    // A small JSON application data block contains the saved profile without executable data interpolation.
+    const json=document.createElement('script');
+    json.type='application/json';json.id='cm-author-profile';
+    // Escapes angle brackets so author input cannot close the script tag.
+    json.textContent=JSON.stringify(profile).replace(/</g,'\\u003c');
+    html.querySelector('head').appendChild(json);
+    const result='<!DOCTYPE html>\n'+html.outerHTML;
+    download('ChemMind_author_RU_KZ_2026.html',result,'text/html;charset=utf-8');
+    $a('authorSaveNotice').textContent=labels[current()].exported+' '+labels[current()].check;
+  }
+  function draft(){
+    save();
+    const p=profile;
+    const text=`JAS USTAZ DIGITAL — ПРИЛОЖЕНИЕ 4 (ЧЕРНОВИК / ЖОБА)\n\n`+
+      `Автор / Автор: ${p.name||'________________'}\n`+
+      `Организация образования / Білім беру ұйымы: ${p.school||'________________'}\n`+
+      `Район / Аудан: ${p.district||'________________'}\n`+
+      `Проект / Жоба: ChemMind — интерактивная образовательная платформа по химии / химияны оқыту платформасы\n\n`+
+      `Использованный ИИ: ChatGPT (OpenAI).\n`+
+      `Задачи: помощь в создании и изменении HTML/CSS/JavaScript, интерфейса и учебных материалов на русском и казахском языках.\n`+
+      `Авторская доработка, проверка химического содержания, апробация и анализ результатов: ОПИСАТЬ КОНКРЕТНЫЕ ЛИЧНЫЕ ДЕЙСТВИЯ И ДОКАЗАТЕЛЬСТВА.\n`+
+      `Заимствованные материалы и источники: ДОПОЛНИТЬ ПРИ НЕОБХОДИМОСТИ.\n`+
+      `Использование персональных данных и наличие согласий: ПРОВЕРИТЬ ФАКТИЧЕСКИЕ ОБСТОЯТЕЛЬСТВА.\n\n`+
+      `Этот черновик не является подписанной формой приложения 4. Проверьте содержание и перенесите в официальную форму.\n`+
+      `Дата: ______________ Подпись: ______________\n`;
+    download('ChemMind_AI_authorship_draft.txt','\ufeff'+text);
+  }
+  const prefill=document.getElementById('cm-author-profile');
+  if(prefill){try{
+    const obj=JSON.parse(prefill.textContent);
+    if(obj&&typeof obj==='object')for(const k of Object.keys(DEFAULT)) if(typeof obj[k]==='string')profile[k]=obj[k].slice(0,250);
+  }catch(e){}}
+  fillFields();
+  $a('authorSave').addEventListener('click',save);
+  $a('authorExportHtml').addEventListener('click',exportHTML);
+  $a('authorDraft').addEventListener('click',draft);
+  document.addEventListener('chemmind:lang',renderLanguage);
+  renderLanguage();
+})();
+</script>
+
+<script>
+// One assessment hub, Crystal Lab is the default; VSEPR remains explicitly selectable.
+(function(){
+  'use strict';
+  let activeTopic='crystal';
+  window.openQuizTopic=function(topic){
+    activeTopic=topic==='vsepr'?'vsepr':'crystal';
+    const crystal=activeTopic==='crystal';
+    document.getElementById('crTest').classList.toggle('hidden',!crystal);
+    document.getElementById('vsQuizWrap').classList.toggle('hidden',crystal);
+    document.getElementById('quizTopicCrystal').classList.toggle('secondary',!crystal);
+    document.getElementById('quizTopicVsepr').classList.toggle('secondary',crystal);
+    document.getElementById('quizTopicCrystal').setAttribute('aria-pressed',String(crystal));
+    document.getElementById('quizTopicVsepr').setAttribute('aria-pressed',String(!crystal));
+    document.getElementById('quizLessonNote').classList.toggle('hidden',!crystal);
+    go('quiz');
+  };
+  document.getElementById('quizTopicCrystal').addEventListener('click',()=>openQuizTopic('crystal'));
+  document.getElementById('quizTopicVsepr').addEventListener('click',()=>openQuizTopic('vsepr'));
+  document.querySelector('nav [data-tab="quiz"]').addEventListener('click',()=>openQuizTopic('crystal'));
+  document.querySelectorAll('[data-go="quiz"][data-quiz-context="vsepr"]').forEach(button=>
+    button.addEventListener('click',()=>openQuizTopic('vsepr'))
+  );
+  document.getElementById('homeStartCrystal').addEventListener('click',()=>{
+    openQuizTopic('crystal');
+    crStart('pre');
+  });
+  // Each module uses its own isolated results storage and CSV export.
+  openQuizTopic('crystal');
+  go('home');
+})();
+</script>
+</body>
+</html>
